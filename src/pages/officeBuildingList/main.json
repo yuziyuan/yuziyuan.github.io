@@ -1,0 +1,7 @@
+{
+    "enablePullDownRefresh": true,
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "写字楼列表",
+    "navigationBarTextStyle": "black"
+}
