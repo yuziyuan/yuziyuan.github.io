@@ -68,7 +68,7 @@ export default {
         title: "加载中"
       });
       this.isGetCode = true;
-      var count = 6;
+      var count = 60;
       var t = setInterval(() => {
         count--;
         this.codeTxt = count + "s后获取";

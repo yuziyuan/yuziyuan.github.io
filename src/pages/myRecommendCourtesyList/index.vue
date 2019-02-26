@@ -19,12 +19,12 @@ export default {
   data() {
     return {
       list: [
-        // {
-        //   time: "推荐时间",
-        //   name: "昵称",
-        //   phone: "手机号",
-        //   whether: "是否签约"
-        // },
+        {
+          time: "推荐时间",
+          name: "昵称",
+          phone: "手机号",
+          whether: "是否签约"
+        },
         // {
         //   time: "2018.12.30",
         //   name: "Pishy",
@@ -76,9 +76,9 @@ export default {
             ) {
               bussData.recordList.forEach(element => {
                 this.list.push({
-                  time: element.gmtCreated,
-                  name: element.userName,
-                  phone: element.mobile,
+                  time: element.gmtCreated.substr(0,10),
+                  name: element.userName||'无',
+                  phone: element.mobile||'无',
                   whether: element.isSigning == '1' ? '是': '否'
                 });
               });

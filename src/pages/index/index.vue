@@ -136,7 +136,7 @@ qqmapsdk = new QQMapWX({
 export default {
   data() {
     return {
-      isAuthUserinfo: false,
+      isAuthUserinfo: true,
       officeList: [],
       brushConditionList: [
         {
@@ -171,14 +171,6 @@ export default {
         }
       ],
       imgUrls: [
-        // {
-        //   img: "/static/images/1.jpg",
-        //   id: ""
-        // },
-        // {
-        //   img: "/static/images/2.jpg",
-        //   id: ""
-        // }
       ],
       indicatorDots: true,
       autoplay: false,
@@ -265,10 +257,10 @@ export default {
     }
   },
   mounted() {
-      
+    this.landlordLogin();
   },
   created() {
-    this.landlordLogin();
+    
   },
   methods: {
     getLocation() {
@@ -326,10 +318,38 @@ export default {
       } else {
         console.log('用户允许授权')
         this.isAuthUserinfo = true
+        this.postWxinfoToSucheng()
         // wx.redirectTo({
         //     url: '/pages/landlord/landlordIndex/main?source=inner'
         // })
       }
+    },
+    postWxinfoToSucheng() {
+      var _this = this
+      wx.getUserInfo({
+        success(res2) {
+          console.log('res2');
+          console.log(res2);
+          var rawData = JSON.parse(res2.rawData)
+          let reqUrl = _this.$API.USER.SAVEUSERINFO;
+          _this.$myRequest(reqUrl, {
+            avatar: rawData.avatarUrl,
+            nickname: rawData.nickName,
+          }, {})
+            .then(res => {
+              if (res.data.status === 200) {
+                  console.log('res_this.$API.USER.SAVEUSERINFO');
+              }
+            })
+            .catch(error => {
+              console.log("pdf 2 png error: ", error);
+            });
+        },
+        fail(error) {
+          console.log('error')
+          console.log(error)
+        }
+      })
     },
     brushConditionClick(item) {
       if (item.name === "面积") {
@@ -402,7 +422,10 @@ export default {
     },
     landlordLogin() {
       var _this = this
-      wx.showLoading({ title: "登录中..." });
+      wx.showLoading({ 
+        title: "登录中..." ,
+        mask: true
+      });
       // let that = this
       wx.login({
         success: res => {

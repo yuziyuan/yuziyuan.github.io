@@ -293,6 +293,7 @@ export default {
 
 <style scoped lang='less'>
 .container {
+  margin-bottom: 50px;
   .top {
     margin: 15px;
     position: relative;

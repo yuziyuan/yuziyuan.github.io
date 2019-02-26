@@ -1,10 +1,23 @@
 <script>
+import store from '@/store';
 export default {
   created () {
     // 调用API从本地缓存中获取数据
     const logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
+
+    wx.getSystemInfo({
+      success(res) {
+        if(res.system.indexOf('iOS') == -1) {
+          store.state.isIphone = false
+          console.log('store.state.isIphone')
+          console.log(store.state.isIphone)
+        }else {
+          store.state.isIphone = true
+        }
+      }
+    })
 
     console.log('app created and cache logs by setStorageSync')
   }

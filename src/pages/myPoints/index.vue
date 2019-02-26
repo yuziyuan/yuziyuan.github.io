@@ -98,9 +98,9 @@ export default {
                   p: element.operateMemo,
                   date: element.gmtCreated,
                   dynamic:
-                    element.operateType == "IN"
+                   ( element.operateType == "IN"
                       ? "+"
-                      : "-" + element.operatePoint
+                      : "-") + element.operatePoint.toString()
                 });
               });
               if(bussData.length < this.pageSize) {

@@ -6,8 +6,10 @@ const store = new Vuex.Store({
     titleCity: '',
     chooseStatus: true, // 定位成功与否标识
     chooseStatus2: true, // 重新定位标识
+    isloadingCity: true, // 
     cityCode: '',
     mobile: '',
+    isIphone: false,
     cityList: [
       {
         cityList: [

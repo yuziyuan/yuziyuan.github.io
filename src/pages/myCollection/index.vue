@@ -124,7 +124,7 @@ export default {
   margin-bottom: 0;
   ul {
     li {
-      margin: 20px 15px 0px 15px;
+      margin: 15px 15px 0px 15px;
       padding-bottom: 15px;
       border-bottom: 1px solid #e1e1e1;
       > img {
@@ -134,6 +134,7 @@ export default {
         border-radius: 5px;
         margin-right: 15px;
         object-fit: cover;
+        vertical-align: top;
       }
       .right {
         display: inline-block;

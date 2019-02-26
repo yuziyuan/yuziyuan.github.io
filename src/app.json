@@ -2,9 +2,9 @@
   "pages": [
     "pages/index/main",
     "pages/bindPhone/main",
+    "pages/indexSreach/main",
     "pages/my/main",
     "pages/indexChooseCity/main",
-    "pages/indexSreach/main",
     "pages/myRecommendCourtesy/main",
     "pages/myRecommendCourtesyList/main",
     "pages/myPoints/main",

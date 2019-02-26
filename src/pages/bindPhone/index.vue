@@ -11,11 +11,11 @@
       <div class="middle">
         <view class="section">
           <img src="/static/images/22@2x.png" alt="">
-          <input type='number' v-model="phoneNumber" placeholder="请输入手机号" />
+          <input :class='{"isAndroidBindPhone": !isIphone}' type='number' v-model="phoneNumber" placeholder="请输入手机号" />
         </view>
         <view class="section">
           <img src="/static/images/21@2x.png" alt="">
-          <input v-model="code" placeholder="请输入验证码" />
+          <input :class='{"isAndroidBindPhone": !isIphone}' v-model="code" placeholder="请输入验证码" />
           <p @click='getCode'>{{codeTxt}}</p>
         </view>
         <view class="btn-area">
@@ -38,7 +38,11 @@ export default {
       showBox:true
     };
   },
-
+  computed: {
+    isIphone() {
+      return store.state.isIphone
+    }
+  },
   components: {},
   mounted() {
     
@@ -66,7 +70,7 @@ export default {
         title: "加载中"
       });
       this.isGetCode = true
-      var count = 6;
+      var count = 60;
       var t = setInterval(() => {
         count--;
         this.codeTxt = count + "s后获取";
@@ -273,6 +277,7 @@ export default {
           width: 16px;
           height: 18px;
           object-fit: cover;
+          vertical-align: middle;
         }
         p {
           float: right;
@@ -287,8 +292,8 @@ export default {
           color: #333;
           font-size: 15px;
           font-family: PingFang-SC-Medium;
-          position: relative;
-          top: 4px;
+          // position: relative;
+          // top: 4px;
         }
         &:first-child {
           img {

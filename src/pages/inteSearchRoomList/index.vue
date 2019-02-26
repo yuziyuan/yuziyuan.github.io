@@ -2,7 +2,7 @@
   <div class="container">
     <div class="top">
       <img src="/static/images/17@2x.png" alt="">
-      <p>{{maxTotalPriceTxt}}，{{maxSeatTxt}}，{{degreeTxt}}</p>
+      <p v-if="maxTotalPriceTxt">{{maxTotalPriceTxt}}，{{maxSeatTxt}}，{{degreeTxt}}</p>
       <span @click='jumpIndex'>
         <i></i>
         修改

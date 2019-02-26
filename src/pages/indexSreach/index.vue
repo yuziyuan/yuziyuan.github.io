@@ -1,14 +1,12 @@
 <template>
   <div class="container">
     <div class="top">
-      <div class="weui-search-bar" id="searchBar">
-        <div class="weui-search-bar__form2">
-          <div class="weui-search-bar__box">
-            <img class="weui-icon-search" src="/static/images/49@2x.png" alt="">
-            <input v-model="wd" type="search" @input='inputChange' class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">
-          </div>
+      <div class="search-bar" id="searchBar">
+        <div class="search-bar__box">
+          <img class="icon-search" src="/static/images/49@2x.png" alt="">
+          <input :class='{"isAndroidSreach": !isIphone}' v-model="wd" type="search" @input='inputChange' class="search-bar__input" id="searchInput" placeholder="搜索" required="">
         </div>
-        <a class="weui-search-bar__cancel-btn" id="searchCancel" @click='jumpIndex'>取消</a>
+        <a class="search-bar__cancel-btn" id="searchCancel" @click='jumpIndex'>取消</a>
       </div>
     </div>
     <div class="foot">
@@ -191,24 +189,29 @@ export default {
       minTotalPrice: "", // 最小价格
       orderBy: "area", // 排序字段 = ['area', 'location', 'total_price'],
       orderSort: "ASC", // ['ASC', 'DESC'],
-      listIsOver: false,
+      listIsOver: false
       // buildingId: ''
       // wd (string, optional): 关键词
     };
   },
 
+  computed: {
+    isIphone() {
+      return store.state.isIphone
+    }
+  },
   components: {},
   mounted() {
-    this.buildingId = this.$root.$mp.query.id
-    console.log(this.buildingId)
-    console.log(this.buildingId)
+    this.buildingId = this.$root.$mp.query.id;
+    console.log(this.buildingId);
+    console.log(this.buildingId);
     this.getList();
   },
   methods: {
     inputChange() {
-      this.officeList = []
-      this.pageIndex = 1
-      this.getList()
+      this.officeList = [];
+      this.pageIndex = 1;
+      this.getList();
     },
     brushConditionClick(item) {
       if (item.name === "面积") {
@@ -286,7 +289,7 @@ export default {
       this.$myRequest(
         reqUrl,
         {
-          cityCode: this.buildingId?store.state.cityCode: '',
+          cityCode: this.buildingId ? store.state.cityCode : "",
           wd: this.wd,
           buildingId: this.buildingId,
           pageIndex: this.pageIndex,
@@ -308,8 +311,8 @@ export default {
             wx.hideLoading();
             this.pageIndex++;
             let bussData = res.data.data.bussData;
-            console.log('bussData2')
-            console.log(bussData)
+            console.log("bussData2");
+            console.log(bussData);
             if (bussData && bussData.length > 0) {
               bussData.forEach(element => {
                 this.officeList.push({
@@ -323,10 +326,10 @@ export default {
                   unit: element.unitPrice
                 });
               });
-              if(bussData.length < this.pageSize) {
+              if (bussData.length < this.pageSize) {
                 this.listIsOver = true;
               }
-            } else if(bussData.length == 0){
+            } else if (bussData.length == 0) {
               this.listIsOver = true;
             } else {
               this.listIsOver = true;
@@ -356,47 +359,46 @@ export default {
 .container {
   margin-bottom: 0;
   .top {
-    .weui-search-bar {
+    .search-bar {
       height: 69px;
       line-height: 69px;
       background-color: #fff;
       padding: 0;
-      .weui-search-bar__form2 {
-        padding: 0;
-        height: 38px;
-        line-height: 38px;
+      .search-bar__box {
         width: 285px;
-        border: none;
+        border: 1px solid transparent;
+        border-radius: 19px;
+        background-color: #f4f4f4;
+        text-align: left;
+        height: 38px;
+        line-height: 35px;
+        padding: 0;
         margin-top: 15px;
         margin-left: 34px;
-        .weui-search-bar__box {
-          width: 285px;
-          border: 1px solid transparent;
-          border-radius: 19px;
-          background-color: #f4f4f4;
-          text-align: left;
-          height: 38px;
-          line-height: 35px;
-          padding: 0;
-          .weui-icon-search {
-            width: 16px;
-            height: 16px;
-            margin-left: 13px;
-            margin-right: 6px;
-          }
-          .weui-search-bar__input {
-            display: inline-block;
-            position: relative;
-            top: 6px;
-          }
+        display: inline-block;
+        .icon-search {
+          width: 16px;
+          height: 16px;
+          margin-left: 13px;
+          margin-right: 6px;
+          vertical-align: middle;
+        }
+        .search-bar__input {
+          font-family: PingFang-SC-Regular;
+          color: #999999;
+          font-size: 15px;
+          display: inline-block;
+          // position: relative;
+          // top: 6px;
         }
       }
-      a.weui-search-bar__cancel-btn {
+      a.search-bar__cancel-btn {
         font-family: PingFang-SC-Regular;
         font-size: 15px;
         color: #333;
         line-height: 69px;
-        // margin-left: -4px;
+        margin-left: 12px;
+        display: inline-block;
       }
     }
   }

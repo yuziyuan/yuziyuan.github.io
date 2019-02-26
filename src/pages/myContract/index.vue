@@ -84,9 +84,9 @@ export default {
               bussData.forEach(element => {
                 this.list.push({
                     address: element.roomName ,
-                    contractTime: element.signingDate ,
+                    contractTime: element.signingDate.substr(0,10) ,
                     contractDate: element.signingLimit ,
-                    ExpireTime: element.dueDate 
+                    ExpireTime: element.dueDate.substr(0,10)
                 });
               });
               if(bussData.length < this.pageSize) {

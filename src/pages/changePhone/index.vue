@@ -107,7 +107,7 @@ export default {
         title: "加载中"
       });
       this.isGetCodeOld = true;
-      var count = 6;
+      var count = 60;
       var t = setInterval(() => {
         count--;
         this.codeTxtOld = count + "s后获取";
@@ -173,7 +173,7 @@ export default {
         title: "加载中"
       });
       this.isGetCodeNew = true;
-      var count = 6;
+      var count = 60;
       var t = setInterval(() => {
         count--;
         this.codeTxtNew = count + "s后获取";

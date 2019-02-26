@@ -29,3 +29,11 @@ button{
     vertical-align: middle;
     margin-right: 6px;
 }
+.isAndroidBindPhone{
+    position: relative;
+    top: 6px;
+}
+.isAndroidSreach{
+    position: relative;
+    top: 6px;
+}

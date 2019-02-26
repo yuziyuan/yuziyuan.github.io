@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div class="top" v-show="!isloading">
+  <div class="container" v-show="!isloadingCity">
+    <div class="top">
       <div class="success" v-show="chooseStatus">
         <p><img src="/static/images/48@2x.png" alt="">定位</p>
         
@@ -18,11 +18,11 @@
       </div>
       <div class="close" v-show="!chooseStatus">
         <div>
-          <img src="/static/images/12@2x.png" alt="">
-          <span>重新定位</span>
+          <img :src="img1" alt="">
+          <span>{{p1}}</span>
         </div>
-        <p class='bold'>定位服务已关闭 去设置</p>
-        <p>请到设置>隐私>定位服务中打开定位权限</p>
+        <p class='bold'>{{p2}}</p>
+        <p>{{p3}}</p>
       </div>
       <!-- <div class="ing" v-show="status3">
         <img src="/static/images/48@2x.png" alt="">
@@ -80,7 +80,11 @@ export default {
         }
       ],
       list: store.state.cityList,
-      isloading: true
+      // isloadingCity: true
+      p1: '重新定位',
+      p2: '定位服务已关闭 去设置',
+      p3: '请到设置>隐私>定位服务中打开定位权限',
+      img1: '/static/images/12@2x.png',
     };
   },
   computed: {
@@ -93,11 +97,21 @@ export default {
     chooseStatus2() {
       return store.state.chooseStatus2
     },
+    isloadingCity() {
+      return store.state.isloadingCity
+    },
   },
   components: {},
-
+  
   mounted() {
+    wx.showLoading({ 
+      title: "加载中..." ,
+      mask: true
+    });
     this.getLocation();
+  },
+  created() {
+    // this.getLocation();
   },
   methods: {
     jumpIndex(item) {
@@ -122,7 +136,6 @@ export default {
             },
             success: function(res) {
               console.error(res);
-              _this.isloading= false
               var city = res.result.address_component.city.substr(
                 0,
                 res.result.address_component.city.length - 1
@@ -132,15 +145,20 @@ export default {
               store.state.chooseStatus = true
               store.state.chooseStatus2 = false //定位成功
               console.log(store.state.chooseStatus);
+              store.state.isloadingCity= false
+              wx.hideLoading();
             },
             fail: function(error) {
               // console.error(error);
+              wx.hideLoading();
             }
           });
         },
         fail(error) {
-          _this.isloading= false
           store.state.chooseStatus = false//定位失败
+          console.log('store.state.chooseStatus false')
+          store.state.isloadingCity= false
+          wx.hideLoading();
         }
       });
     },

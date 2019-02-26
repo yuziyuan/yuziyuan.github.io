@@ -13,19 +13,21 @@
     <div class="middle">
       <div class="div1">
         <h4 :style="{opacity: priceValue === 0? 1:0}">价格不限</h4>
-        <p :style="{marginLeft: priceValue*4.8+'px'}">{{priceValue===50?'50000元以上/月':priceValue*1000+"元/月"}}</p>
-        <slider @changing='priceChange' background-color='#F1F1F1' active-color='#16509B' min='0' max='50' block-color='#16509B' block-size='21' />
+        <!-- <p :style="{marginLeft: priceValue*4.8+'px'}">{{priceValue===50?'50000元以上/月':priceValue*1000+"元/月"}}</p> -->
+        <p>{{priceValue===50?'50000元以上/月':priceValue*1000+"元/月"}}</p>
+        <slider @change='priceChange' background-color='#F1F1F1' active-color='#16509B' min='0' max='50' block-color='#16509B' block-size='21' />
       </div>
       <div class="div2">
         <h4 :style="{opacity: peopleCountValue === 0? 1:0}">人数不限</h4>
-        <p :style="{marginLeft: peopleCountValue*5.6+10+'px'}">{{peopleCountValue===50?peopleCountValue+"人以上":peopleCountValue+'人'}}</p>
-        <slider @changing='peopleCountChange' background-color='#F1F1F1' active-color='#16509B' min='0' max='50' block-color='#16509B' block-size='21' />
+        <!-- <p :style="{marginLeft: peopleCountValue*5.6+10+'px'}">{{peopleCountValue===50?peopleCountValue+"人以上":peopleCountValue+'人'}}</p> -->
+        <p>{{peopleCountValue===50?peopleCountValue+"人以上":peopleCountValue+'人'}}</p>
+        <slider @change='peopleCountChange' background-color='#F1F1F1' active-color='#16509B' min='0' max='50' block-color='#16509B' block-size='21' />
       </div>
       <div class="div3">
         <p v-show="sizeValue1" class='p1'>希望空间偏经济</p>
         <p v-show="sizeValue2" class='p2'>希望空间偏舒适</p>
         <p v-show="sizeValue3" class='p3'>希望空间偏高端</p>
-        <slider background-color='#F1F1F1' active-color='#F1F1F1' block-color='#16509B' max='3' min='1' block-size='21' @changing='sizeChange' />
+        <slider background-color='#F1F1F1' active-color='#F1F1F1' block-color='#16509B' max='3' min='1' block-size='21' @change='sizeChange' />
         <ul>
           <li>经济</li>
           <li>舒适</li>

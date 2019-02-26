@@ -42,8 +42,6 @@ fly.interceptors.response.use(
   (response) => {
     if (response.data.status === 401) {
       wx.removeStorageSync('sessionId')
-      wx.removeStorageSync('landlordSignIn')
-      wx.removeStorageSync('renterSignIn')
       wx.redirectTo({
         url: `/pages/index/main`
       })
