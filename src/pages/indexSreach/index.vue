@@ -5,6 +5,7 @@
         <div class="search-bar__box">
           <img class="icon-search" src="/static/images/49@2x.png" alt="">
           <input :class='{"isAndroidSreach": !isIphone}' v-model="wd" type="search" @input='inputChange' class="search-bar__input" id="searchInput" placeholder="搜索" required="">
+          <img v-show="wd.length > 0" @click='wd = ""' src="/static/images/close2.png" class='close' alt="">
         </div>
         <a class="search-bar__cancel-btn" id="searchCancel" @click='jumpIndex'>取消</a>
       </div>
@@ -383,13 +384,20 @@ export default {
           margin-right: 6px;
           vertical-align: middle;
         }
+        img.close{
+          width: 16px;
+          height: 16px;
+          position: relative;
+          top: 2px;
+        }
         .search-bar__input {
           font-family: PingFang-SC-Regular;
           color: #999999;
           font-size: 15px;
           display: inline-block;
-          // position: relative;
-          // top: 6px;
+          width: 74%;
+          position: relative;
+          top: 1px;
         }
       }
       a.search-bar__cancel-btn {
@@ -574,6 +582,9 @@ export default {
                 font-family: PingFang-SC-Regular;
                 font-size: 12px;
                 color: #999;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
               }
             }
             > p {

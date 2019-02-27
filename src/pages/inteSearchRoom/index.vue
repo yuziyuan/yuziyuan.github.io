@@ -1,12 +1,11 @@
 <template>
   <div class="container" v-if="isLoaded">
     <div class="top">
-      <div class="weui-search-bar" id="searchBar">
-        <div class="weui-search-bar__form">
-          <div class="weui-search-bar__box">
-            <img class="weui-icon-search" src="/static/images/49@2x.png" alt="">
-            <input @blur='blurInput' type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">
-          </div>
+      <div class="search-bar" id="searchBar">
+        <div class="search-bar__box">
+          <img class="icon-search" src="/static/images/49@2x.png" alt="">
+          <input :class='{"isAndroidSreach": !isIphone}' v-model="wd" type="search" @input='inputChange' class="search-bar__input" id="searchInput" placeholder="搜索" required="">
+          <img v-show="wd.length > 0" @click='wd = ""' src="/static/images/close2.png" class='close' alt="">
         </div>
       </div>
     </div>
@@ -36,12 +35,13 @@
       </div>
     </div>
     <div class="foot">
-      <a  @click='jumpList' class="weui-btn weui-btn_plain-default">智能找房</a>
+      <a @click='jumpList' class="weui-btn weui-btn_plain-default">智能找房</a>
     </div>
   </div>
 </template>
 
 <script>
+import store from "@/store";
 export default {
   data() {
     return {
@@ -52,10 +52,16 @@ export default {
       sizeValue2: false,
       sizeValue3: false,
       degree: "ECONOMY",
-      isLoaded: false
+      isLoaded: false,
+      wd: ""
     };
   },
 
+  computed: {
+    isIphone() {
+      return store.state.isIphone
+    }
+  },
   components: {},
   watch: {
     sizeValue() {
@@ -79,9 +85,10 @@ export default {
   },
   created() {},
   mounted() {
-    this.isLoaded = true
+    this.isLoaded = true;
   },
   methods: {
+    inputChange() {},
     priceChange(e) {
       this.priceValue = e.target.value;
       console.log("this.priceValue");
@@ -102,9 +109,11 @@ export default {
         "?degree=" +
         this.degree +
         "&maxSeat=" +
-        this.peopleCountValue+
+        this.peopleCountValue +
         "&maxTotalPrice=" +
-        this.priceValue * 1000;
+        this.priceValue * 1000 +
+        "&wd=" +
+        this.wd;
       console.log(params);
       const url = "../inteSearchRoomList/main" + params;
       console.log(url);
@@ -117,38 +126,53 @@ export default {
 <style scoped lang='less'>
 .container {
   .top {
-    .weui-search-bar {
-      // height: 69px;
-      // line-height: 69px;
-      width: 285px;
+    .search-bar {
+      height: 69px;
+      line-height: 69px;
       background-color: #fff;
       padding: 0;
-      margin: 0px auto 0;
-      border: none;
-      .weui-search-bar__form {
-        padding: 15px 0;
+      .search-bar__box {
+        width: 285px;
+        border: 1px solid transparent;
+        border-radius: 19px;
+        background-color: #f4f4f4;
+        text-align: left;
         height: 38px;
-        line-height: 38px;
-        border: none;
-        .weui-search-bar__box {
-          border-radius: 19px;
-          background-color: #f4f4f4;
-          text-align: left;
-          height: 38px;
-          line-height: 35px;
-          padding: 0;
-          .weui-icon-search {
-            width: 16px;
-            height: 16px;
-            margin-left: 13px;
-            margin-right: 6px;
-          }
-          .weui-search-bar__input {
-            display: inline-block;
-            position: relative;
-            top: 6px;
-          }
+        line-height: 35px;
+        padding: 0;
+        margin-top: 15px;
+        margin-left: 34px;
+        display: inline-block;
+        .icon-search {
+          width: 16px;
+          height: 16px;
+          margin-left: 13px;
+          margin-right: 6px;
+          vertical-align: middle;
         }
+        img.close{
+          width: 16px;
+          height: 16px;
+          position: relative;
+          top: 2px;
+        }
+        .search-bar__input {
+          font-family: PingFang-SC-Regular;
+          color: #999999;
+          font-size: 15px;
+          display: inline-block;
+          width: 74%;
+          position: relative;
+          top: 1px;
+        }
+      }
+      a.search-bar__cancel-btn {
+        font-family: PingFang-SC-Regular;
+        font-size: 15px;
+        color: #333;
+        line-height: 69px;
+        margin-left: 12px;
+        display: inline-block;
       }
     }
   }

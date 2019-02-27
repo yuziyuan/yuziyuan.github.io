@@ -257,10 +257,15 @@ export default {
     }
   },
   mounted() {
-    this.landlordLogin();
+    
   },
   created() {
     
+  },
+  onLoad(query) {
+    console.log('query')
+    console.log(query)
+    this.landlordLogin(query);
   },
   methods: {
     getLocation() {
@@ -420,7 +425,7 @@ export default {
       this.officeList = [];
       this.getList();
     },
-    landlordLogin() {
+    landlordLogin(query) {
       var _this = this
       wx.showLoading({ 
         title: "登录中..." ,
@@ -445,8 +450,11 @@ export default {
           console.log(res);
           if (res.code) {
             let reqUrl = _this.$API.USER.LOGIN + res.code;
+            const scene = decodeURIComponent(query.scene)
             _this.$http
-              .get(reqUrl, {})
+              .get(reqUrl, {
+                recommendCode: scene
+              })
               .then(({ data }) => {
                 console.log('data')
                 console.log(data)
@@ -633,6 +641,10 @@ export default {
         const url = "../officeBuildingList/main";
         console.log(url);
         wx.navigateTo({ url });
+      }else if(item.name === '公司简介') {
+        const url = "../indexCommInfo/main";
+        console.log(url);
+        wx.navigateTo({ url });
       }
     }
   }
@@ -645,9 +657,15 @@ export default {
   margin-bottom: 0;
   .top {
     .head {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 64px;
       line-height: 64px;
       text-align: center;
+      background: #fff;
+      z-index: 9999;
       .address {
         float: left;
         margin-left: 20px;
@@ -682,6 +700,7 @@ export default {
       }
     }
     .middle {
+      margin-top: 64px;
       height: 180px;
       swiper {
         height: 180px;
@@ -891,6 +910,9 @@ export default {
                 font-family: PingFang-SC-Regular;
                 font-size: 12px;
                 color: #999;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
               }
             }
             > p {

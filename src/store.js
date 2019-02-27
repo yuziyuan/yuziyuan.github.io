@@ -9,6 +9,7 @@ const store = new Vuex.Store({
     isloadingCity: true, // 
     cityCode: '',
     mobile: '',
+    consumerHotline: '',
     isIphone: false,
     cityList: [
       {

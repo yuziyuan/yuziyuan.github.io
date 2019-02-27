@@ -20,7 +20,7 @@
         <input type="text" maxlength="50" v-model="realname" placeholder="请输入">
       </li>
       <li>
-        <span>公司昵称</span>
+        <span>公司名称</span>
         <input type="text" maxlength="50" v-model="company" placeholder="请输入">
       </li>
     </ul>
@@ -199,7 +199,7 @@ export default {
       }
       .phone {
         position: absolute;
-        top: 21px;
+        top: 19px;
         right: 0px;
         width: 12px;
         height: 12px;

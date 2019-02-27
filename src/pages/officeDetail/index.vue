@@ -26,6 +26,7 @@
             <span>元/月</span>
           </p>
         </div>
+        <div style="height:1px;"></div>
         <div class="btn-box clear">
           <button v-for="(item, index) in detail.advantageList" :key='index'>{{item}}</button>
         </div>
@@ -112,7 +113,26 @@
           </h3>
           <div class="content">
             <video id="myVideo" :src="detail.houseVideo" controls></video>
-            <img v-for="(item, index) in detail.imgUrls" :key='index' :src="item" alt="" @click='preImg'>
+            <!-- <img v-for="(item, index) in detail.imgUrls" :key='index' :src="item" alt="" @click='preImg'> -->
+            <map
+              id="map"
+              :longitude="latitude"
+              :latitude="longitude"
+              scale="14"
+              :controls="controls"
+              :markers="markers"
+              :polyline="polyline"
+              show-location
+              style="width: 100%; height: 200px;"
+            ></map>
+            <!-- <map
+              id="map"
+              :longitude="latitude"
+              :latitude="longitude"
+              scale="14"
+              show-location
+              style="width: 100%; height: 199px;"
+            ></map> -->
           </div>
         </div>
       </div>
@@ -128,6 +148,11 @@
 
 <script>
 import store from "@/store";
+import QQMapWX from "../../utils/qqmap";
+var qqmapsdk;
+qqmapsdk = new QQMapWX({
+  key: "T5KBZ-BLY6V-XYSPD-UNLWC-4WAUS-TVFB4"
+});
 export default {
   data() {
     return {
@@ -193,7 +218,22 @@ export default {
       },
       officeId: '',
       isMake: false,
-      isloading: false
+      isloading: false,
+      latitude: '',
+      longitude: '',
+      markers: [],
+      polyline: [],
+      controls: [{
+        id: 1,
+        iconPath: '',
+        position: {
+          left: 0,
+          top: 300 - 50,
+          width: 50,
+          height: 50
+        },
+        clickable: true
+      }]
     };
   },
 
@@ -203,8 +243,35 @@ export default {
     this.getDetail()
 
     this.isMake = this.$root.$mp.query.isAppoint
+    
   },
   methods: {
+    getLocation() {
+      var _this = this;
+      console.log('this.detail.address')
+      console.log(_this.detail.address)
+      //调用地址解析接口
+      qqmapsdk.geocoder({
+        //获取表单传入地址
+        address: _this.detail.address, //地址参数，例：固定地址，address: '北京市海淀区彩和坊路海淀西大街74号'
+        success: function(res) {
+          //成功后的回调
+          console.log(res);
+          var res = res.result;
+          _this.latitude = res.location.lat;
+          _this.longitude = res.location.lng;
+          console.log( '_this.latitude');
+          console.log( _this.latitude);
+          console.log( _this.longitude);
+        },
+        fail: function(error) {
+          console.error(error);
+        },
+        complete: function(res) {
+          console.log(res);
+        }
+      });
+    },
     preImg() {
       wx.previewImage({
         current: this.houseMap, // 当前显示图片的http链接
@@ -249,6 +316,7 @@ export default {
                   return item.name
                 }),
               }
+              this.getLocation()
               console.log('this.detail')
               console.log(this.detail)
             }
@@ -293,7 +361,7 @@ export default {
 
 <style scoped lang='less'>
 .container {
-  margin-bottom: 50px;
+  padding-bottom: 100px;
   .top {
     margin: 15px;
     position: relative;
@@ -339,7 +407,7 @@ export default {
       }
     }
     .unitAndMoney {
-      height: 30px;
+      min-height: 30px;
       line-height: 30px;
       margin: 15px 0 5px;
       p {

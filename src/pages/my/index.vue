@@ -124,6 +124,8 @@ export default {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
             this.myInfo.avatar = bussData.avatarUrl || "/static/images/8@2x.png";
+            console.log(bussData)
+            console.log(this.myInfo)
             console.log(this.myInfo.avatar)
             this.myInfo.name = bussData.nickname || "昵称";
             store.state.mobile = bussData.mobile;
@@ -171,7 +173,7 @@ export default {
     },
     call() {
       wx.makePhoneCall({
-        phoneNumber: "1340000"
+        phoneNumber: store.state.consumerHotline
       });
     },
     JumpService() {

@@ -3,6 +3,7 @@
     "pages/index/main",
     "pages/bindPhone/main",
     "pages/indexSreach/main",
+    "pages/indexCommInfo/main",
     "pages/my/main",
     "pages/indexChooseCity/main",
     "pages/myRecommendCourtesy/main",

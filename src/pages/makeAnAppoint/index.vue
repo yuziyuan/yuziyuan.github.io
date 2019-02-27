@@ -40,7 +40,7 @@ const days = [];
 const hours = [];
 const minutes = [];
 //获取年
-for (let i = 2018; i <= date.getFullYear() + 5; i++) {
+for (let i = 2019; i <= date.getFullYear() + 5; i++) {
   years.push("" + i);
 }
 //获取月份
@@ -71,6 +71,12 @@ for (let i = 0; i < 60; i++) {
   }
   minutes.push("" + i);
 }
+var date2 = new Date()
+var y = date2.getFullYear()+1
+var m = date2.getMonth()
+var d = date2.getDate()
+var hh = date2.getHours()
+var mm = date2.getMinutes()
 export default {
   data() {
     return {
@@ -82,7 +88,8 @@ export default {
       roomId: "",
       time: "",
       multiArray: [years, months, days, hours, minutes],
-      multiIndex: [0, 9, 16, 10, 17],
+      // multiIndex: [0, 9, 16, 10, 17],
+      multiIndex: [y, m, d, hh, mm],
       choose_year: ""
     };
   },

@@ -4,7 +4,7 @@
       <img src="/static/images/39@2x.png" alt="">
       <div>
         <span>积分余额</span>
-        <span>{{pointsConut}}</span>
+        <span>{{pointsConut||0}}</span>
       </div>
     </div>
     <div class="f4"></div>
@@ -62,7 +62,7 @@ export default {
 
   components: {},
   onShow() {
-    this.pointsConut = wx.getStorageSync("userInfo").point;
+    this.pointsConut = wx.getStorageSync("userInfo").point|| 0;
     console.log(this.pointsConut)
   },
   mounted() {

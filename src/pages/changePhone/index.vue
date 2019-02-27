@@ -3,7 +3,7 @@
     <div class="box">
       <div class="top">
         <p>
-          本次操作需要短信确认，请输入123#65收到的短信 验证码
+          本次操作需要短信确认，请输入{{phoneNumberOld}}收到的短信 验证码
         </p>
       </div>
       <div class="middle">

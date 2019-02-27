@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="middle">
-      <p>2019年支付宝五福来了！五福来了就是年，亲人们，学姐告诉大家：今年咱们集五福从1月25日开始！忙碌一年了，世界无论变成啥样，五福不会变的，咱们在一起，就是福呀！下周五见哦！五福来了就是年，亲人们，学姐告诉大家：今年咱们集五福从1月25日开始！忙碌一年了，世界无论变成啥样，五福不会变的，咱们在一起，就是福呀！下周五见哦！</p>
+      <p>{{rule}}</p>
       <img :src="img" alt="">
       <!-- <button open-type='share'>分享给好友</button> -->
       <button @click='onSavePicClick'>分享给好友</button>
@@ -20,7 +20,8 @@
 export default {
   data() {
     return {
-      img: ""
+      img: "",
+      rule: ""
     };
   },
 
@@ -28,6 +29,7 @@ export default {
 
   mounted() {
     this.getDetail();
+    this.getRule();
   },
   onShareAppMessage(res) {
     console.log("onShareAppMessage");
@@ -36,13 +38,17 @@ export default {
       console.log(res.target);
     }
     return {
-      title: "自定义转发标题",
-      path: "/page/user?id=123"
+      title: "你好",
+      path: "../myRecommendCourtesy/main?"
     };
   },
   methods: {
     onSavePicClick: function() {
-      var _this = this
+      wx.showLoading({
+        title: "",
+        mask: true
+      });
+      var _this = this;
       console.log("onSavePicClick");
       var downloadUrl = _this.img;
       console.log("downloadUrl=" + downloadUrl);
@@ -52,6 +58,7 @@ export default {
           content:
             "当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。"
         });
+        wx.hideLoading();
         return;
       } // 可以通过 wx.getSetting 先查询一下用户是否授权了 "scope.writePhotosAlbum" 这个 scope
       wx.getSetting({
@@ -67,6 +74,11 @@ export default {
               },
               fail() {
                 // 用户拒绝了授权
+                wx.hideLoading();
+                wx.showToast({
+                  icon: "",
+                  title: "2-授权《保存图片》权限失败"
+                });
                 console.log("2-授权《保存图片》权限失败"); // 打开设置页面
                 wx.openSetting({
                   success: function(data) {
@@ -86,6 +98,7 @@ export default {
         fail(res) {
           console.log("getSetting: success");
           console.log(res);
+          wx.hideLoading();
         }
       });
     },
@@ -100,17 +113,40 @@ export default {
             filePath: res.tempFilePath,
             success(res) {
               console.log("保存图片：success");
-              wx.showToast({
-                title: "保存成功"
+              wx.hideLoading();
+              // wx.showToast({
+              //   title: "保存推荐二维码成功，请转发给您的朋友或朋友圈"
+              // });
+              wx.showModal({
+                title: "提示",
+                showCancel: false,
+                content: "保存推荐二维码成功，请转发给您的朋友或朋友圈",
+                success(res) {
+                  if (res.confirm) {
+                    console.log("用户点击确定");
+                  } else if (res.cancel) {
+                    console.log("用户点击取消");
+                  }
+                }
               });
             },
             fail(res) {
+              wx.hideLoading();
               console.log("保存图片：fail");
+              wx.showToast({
+                icon: "",
+                title: "保存图片：fail"
+              });
               console.log(res);
             }
           });
         },
         fail: function(res) {
+          wx.hideLoading();
+          wx.showToast({
+            icon: "",
+            title: "下载文件：fail"
+          });
           console.log("下载文件：fail");
           console.log(res);
         }
@@ -120,6 +156,29 @@ export default {
       const url = "../myRecommendCourtesyList/main";
       console.log(url);
       wx.navigateTo({ url });
+    },
+    getRule() {
+      let reqUrl = this.$API.BUSINESS.USER.SYS + "recommendActivityRule";
+      this.$myRequestGet(reqUrl, {}, {})
+        .then(res => {
+          if (res.data.status === 200) {
+            let bussData = res.data.data.bussData;
+            console.log("bussData");
+            console.log(bussData);
+            if (bussData) {
+              this.rule = bussData;
+            } else {
+              wx.showToast({
+                title: bussData,
+                icon: "none",
+                duration: 1500
+              });
+            }
+          }
+        })
+        .catch(error => {
+          console.log("pdf 2 png error: ", error);
+        });
     },
     getDetail() {
       let reqUrl = this.$API.BUSINESS.USER.RECOMMEND;
@@ -143,16 +202,6 @@ export default {
         .catch(error => {
           console.log("pdf 2 png error: ", error);
         });
-      // BUSINESS.USER.RECOMMEND
-
-      // isOfflineReward (string, optional): 是否线下领取奖励(0否/1是) ,
-      // recommendCount (integer, optional): 推荐人数 ,
-      // recordList (Array[UserRecommendRecordDTO], optional): 记录列表 ,
-      // signingCount (integer, optional): 已签约人数 ,
-      // unSigningCount (integer, optional): 未签约人数 ,
-      // userName (string, optional): 推荐人 ,
-      // wxCodeFileKey (string, optional): 用户推荐二维码图片KEY ,
-      // wxCodeFileUrl (string, optional): 用户推荐二维码图片URL
     }
   },
 

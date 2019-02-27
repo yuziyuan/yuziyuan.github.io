@@ -26,7 +26,7 @@
               </div>
               <p>{{item.name}}
                 <span class='unit'>{{item.unit}}</span>
-                <span>元/㎡</span>
+                <!-- <span>元/㎡</span> -->
               </p>
               <div class="foot-child clear">
                 <div class="address">
@@ -274,6 +274,9 @@ export default {
                 font-family: PingFang-SC-Regular;
                 font-size: 12px;
                 color: #999;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
               }
             }
             > p {

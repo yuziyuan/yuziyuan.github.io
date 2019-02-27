@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import store from "@/store";
 export default {
   data() {
     return {
@@ -61,7 +62,8 @@ export default {
       maxSeatTxt: "",
       maxTotalPriceTxt: "",
       pageIndex: 1,
-      pageSize: 10
+      pageSize: 10,
+      wd: ''
     };
   },
 
@@ -74,6 +76,7 @@ export default {
     this.degree = params.degree;
     this.maxSeat = params.maxSeat == '0'?'':parseInt(params.maxSeat); // 最大人数
     this.maxTotalPrice = params.maxTotalPrice == '0'?'':parseInt(params.maxTotalPrice); // 最大价格
+    this.wd = params.wd
     this.getTxt();
     this.getList();
   },
@@ -94,7 +97,8 @@ export default {
           maxSeat: this.maxSeat,
           maxTotalPrice: this.maxTotalPrice,
           pageIndex: this.pageIndex,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          wd: this.wd
         },
         {}
       )
@@ -275,6 +279,9 @@ export default {
               font-family: PingFang-SC-Regular;
               font-size: 12px;
               color: #999;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
             }
           }
           > p {
