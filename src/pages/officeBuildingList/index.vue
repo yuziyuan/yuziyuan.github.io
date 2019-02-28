@@ -57,7 +57,7 @@ import store from "@/store";
 import QQMapWX from "../../utils/qqmap";
 var qqmapsdk;
 qqmapsdk = new QQMapWX({
-  key: "T5KBZ-BLY6V-XYSPD-UNLWC-4WAUS-TVFB4"
+  key: "MJSBZ-N7NCJ-6SYFC-F6JNJ-J76R7-A4BYI"
 });
 export default {
   data() {
@@ -82,7 +82,6 @@ export default {
   },
   watch:{
     cityCode() {
-      console.log(this.cityCode)
       this.pageIndex = 1
       this.getList();
     }
@@ -97,7 +96,6 @@ export default {
   methods: {
     jumpAddress() {
       const url = "../indexChooseCity/main";
-      console.log(url);
       wx.navigateTo({ url });
     },
     lower(e) {
@@ -106,7 +104,6 @@ export default {
       this.getList();
     },
     getList() {
-      console.log("getList");
       let reqUrl = this.$API.BUSINESS.USER.BUILDINGPAGE;
       this.$myRequest(
         reqUrl,
@@ -151,12 +148,10 @@ export default {
     },
     jumpSearch() {
       const url = "../indexSreach/main";
-      console.log(url);
       wx.navigateTo({ url });
     },
     jumpDetail(item) {
       const url = "../indexSreach/main?id=" + item.id;
-      console.log(url);
       wx.navigateTo({ url });
     }
   },

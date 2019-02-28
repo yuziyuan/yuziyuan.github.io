@@ -14,6 +14,7 @@ const API = {
     LOGOUT: 'mini/user/logout',//登出
     SAVEUSERINFO: 'mini/user/saveUserInfo',//编辑个人信息
     SAVEWXUSERINFO: 'mini/user/saveWxUserInfo',//保存微信授权用户信息
+    GETCITY: '/mini/user/get_city' ,// 
   },
   BASE:{
     MINIUPLOADFILE: 'base/sys/mini/miniUploadFile'

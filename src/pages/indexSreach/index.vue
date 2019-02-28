@@ -204,8 +204,6 @@ export default {
   components: {},
   mounted() {
     this.buildingId = this.$root.$mp.query.id;
-    console.log(this.buildingId);
-    console.log(this.buildingId);
     this.getList();
   },
   methods: {
@@ -284,7 +282,6 @@ export default {
       this.getList();
     },
     getList() {
-      console.log("getList");
       wx.showLoading({ title: "加载中" });
       let reqUrl = this.$API.BUSINESS.OFFICEROOM.PAGE;
       this.$myRequest(
@@ -312,8 +309,6 @@ export default {
             wx.hideLoading();
             this.pageIndex++;
             let bussData = res.data.data.bussData;
-            console.log("bussData2");
-            console.log(bussData);
             if (bussData && bussData.length > 0) {
               bussData.forEach(element => {
                 this.officeList.push({
@@ -335,7 +330,6 @@ export default {
             } else {
               this.listIsOver = true;
             }
-            console.log(this.officeList);
           }
         })
         .catch(error => {
@@ -344,7 +338,6 @@ export default {
     },
     jumpDetail(item) {
       const url = "../officeDetail/main?id=" + item.id;
-      console.log(url);
       wx.navigateTo({ url });
     },
     jumpIndex(item) {

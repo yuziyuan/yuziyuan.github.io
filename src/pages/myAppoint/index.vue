@@ -55,7 +55,6 @@ export default {
   methods: {
     jumpDetail(item) {
       const url = "../officeDetail/main?isAppoint=true&id=" + item.roomId;
-      console.log(url);
       wx.navigateTo({ url });
     },
     lower(e) {
@@ -64,7 +63,6 @@ export default {
       this.getList();
     },
     getList() {
-      console.log("getList");
       let reqUrl = this.$API.BUSINESS.USER.LOOKINGPAGE;
       this.$myRequest(
         reqUrl,
@@ -79,8 +77,6 @@ export default {
             this.isLoadingList = false;
             this.pageIndex++;
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (bussData && bussData.length > 0) {
               bussData.forEach(element => {
                 this.officeList.push({
@@ -102,7 +98,6 @@ export default {
             } else {
               this.listIsOver = true;
             }
-            console.log(this.officeList);
           }
         })
         .catch(error => {

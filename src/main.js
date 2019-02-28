@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App'
 import store from './store'
-console.log(store,'1')
 import './weui.css'
 import './base.css'
 import API from '@/utils/apiConstant'

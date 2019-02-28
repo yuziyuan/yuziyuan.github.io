@@ -63,7 +63,6 @@ export default {
   components: {},
   onShow() {
     this.pointsConut = wx.getStorageSync("userInfo").point|| 0;
-    console.log(this.pointsConut)
   },
   mounted() {
     this.getList();
@@ -75,7 +74,6 @@ export default {
       this.getList();
     },
     getList() {
-      console.log("getList");
       let reqUrl = this.$API.BUSINESS.USER.POINTFLOW;
       this.$myRequest(
         reqUrl,
@@ -90,8 +88,6 @@ export default {
             this.isLoadingList = false;
             this.pageIndex++;
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (bussData && bussData.length > 0) {
               bussData.forEach(element => {
                 this.list.push({

@@ -57,43 +57,43 @@
               <span>
                 工 位：
               </span>
-              <span>{{detail.houseDetailWorkstation+'个'}}</span>
+              <span>{{detail.houseDetailWorkstation?detail.houseDetailWorkstation+'个':'暂无数据'}}</span>
             </div>
             <div>
               <span>
                 面 积：
               </span>
-              <span>{{detail.houseDetailAcreage}}</span>
+              <span>{{detail.houseDetailAcreage?detail.houseDetailAcreage:'暂无数据'}}</span>
             </div>
             <div>
               <span>
                 装修情况：
               </span>
-              <span>{{detail.houseDetailDecoration}}</span>
+              <span>{{detail.houseDetailDecoration?detail.houseDetailDecoration:'暂无数据'}}</span>
             </div>
             <div>
               <span>
                 格 局：
               </span>
-              <span>{{detail.houseDetailPattern}}</span>
+              <span>{{detail.houseDetailPattern?detail.houseDetailPattern:'暂无数据'}}</span>
             </div>
             <div>
               <span>
                 管 理 费：
               </span>
-              <span>{{detail.houseDetailManagementExpense}}</span>
+              <span>{{detail.houseDetailManagementExpense?detail.houseDetailManagementExpense:'暂无数据'}}</span>
             </div>
             <div>
               <span>
                 朝 向：
               </span>
-              <span>{{detail.houseDetailOrientation}}</span>
+              <span>{{detail.houseDetailOrientation?detail.houseDetailOrientation:'暂无数据'}}</span>
             </div>
             <div>
               <span>
                 空 调 费：
               </span>
-              <span>{{detail.houseDetailAirConditionFee}}</span>
+              <span>{{detail.houseDetailAirConditionFee?detail.houseDetailAirConditionFee:'暂无数据'}}</span>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@
           </div>
         </div>
         <div class="three">
-          <h3 class="title">
+          <h3 class="title" v-show="detail.houseVideo">
             <i></i>
             房源视频
           </h3>
@@ -151,7 +151,7 @@ import store from "@/store";
 import QQMapWX from "../../utils/qqmap";
 var qqmapsdk;
 qqmapsdk = new QQMapWX({
-  key: "T5KBZ-BLY6V-XYSPD-UNLWC-4WAUS-TVFB4"
+  key: "MJSBZ-N7NCJ-6SYFC-F6JNJ-J76R7-A4BYI"
 });
 export default {
   data() {
@@ -248,21 +248,15 @@ export default {
   methods: {
     getLocation() {
       var _this = this;
-      console.log('this.detail.address')
-      console.log(_this.detail.address)
       //调用地址解析接口
       qqmapsdk.geocoder({
         //获取表单传入地址
         address: _this.detail.address, //地址参数，例：固定地址，address: '北京市海淀区彩和坊路海淀西大街74号'
         success: function(res) {
           //成功后的回调
-          console.log(res);
           var res = res.result;
           _this.latitude = res.location.lat;
           _this.longitude = res.location.lng;
-          console.log( '_this.latitude');
-          console.log( _this.latitude);
-          console.log( _this.longitude);
         },
         fail: function(error) {
           console.error(error);
@@ -303,7 +297,7 @@ export default {
                 houseDetailPattern: bussData.structure,
                 houseDetailManagementExpense: bussData.managementFee+"元/㎡",
                 houseDetailOrientation: bussData.face,
-                houseDetailAirConditionFee: bussData.airConditionerFee+"元/㎡",
+                houseDetailAirConditionFee: bussData.airConditionerFee,
                 houseIntroduction:
                   bussData.introduce,
                 houseVideo:bussData.videoUrl,
@@ -317,8 +311,6 @@ export default {
                 }),
               }
               this.getLocation()
-              console.log('this.detail')
-              console.log(this.detail)
             }
           }
         })
@@ -332,7 +324,6 @@ export default {
         .then(res => {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
-            console.log(bussData)
             if(bussData) {
               if(this.detail.isCollected) {
                 this.detail.collectionStatus = "/static/images/coll0.png"
@@ -350,7 +341,6 @@ export default {
     },
     jumpMakeP() {
       const url = "../makeAnAppoint/main?id="+this.officeId;
-      console.log(url);
       wx.navigateTo({ url });
     }
   },
@@ -412,8 +402,8 @@ export default {
       margin: 15px 0 5px;
       p {
         &:first-child {
-          float: left;
-          width: 60%;
+          // float: left;
+          // width: 60%;
           font-family: PingFang-SC-Bold;
           font-size: 15px;
           color: #333;
@@ -427,8 +417,9 @@ export default {
           }
         }
         &:last-child {
-          float: right;
-          width: 35%;
+          // float: left;
+          // text-align: right;
+          // width: 35%;
           span {
             font-family: PingFang-SC-Regular;
             font-size: 12px;

@@ -113,16 +113,13 @@ export default {
       this.time = year + "-" + month + "-" + day + " " + hour + ":" + minute;
       
       this.bookingTime =year + "-" + month + "-" + day +'T'+hour + ":" + minute+':00.000Z'
-      console.log(this.time);
       // this.bookingTime = this.time
-      console.log(this.bookingTime);
     },
     //监听picker的滚动事件
     bindMultiPickerColumnChange: function(e) {
       //获取年份
       if (e.detail.column == 0) {
         let choose_year = this.multiArray[e.detail.column][e.detail.value];
-        console.log(choose_year);
         this.choose_year = choose_year;
       }
       //console.log('修改的列为', e.detail.column, '，值为', e.detail.value);
@@ -158,7 +155,6 @@ export default {
         } else if (num == 2) {
           //判断2月份天数
           let year = parseInt(this.choose_year);
-          console.log(year);
           if ((year % 400 == 0 || year % 100 != 0) && year % 4 == 0) {
             for (let i = 1; i <= 29; i++) {
               if (i < 10) {
@@ -177,7 +173,6 @@ export default {
             this.multiArray[2] = temp;
           }
         }
-        console.log(this.multiArray[2]);
       }
       var data = {
         multiArray: this.multiArray,
@@ -186,16 +181,11 @@ export default {
       data.multiIndex[e.detail.column] = e.detail.value;
     },
     backIndex() {
-      console.log("122");
       wx.navigateBack({
         delta: 2
       });
     },
     submit() {
-      console.log(this.bookingTime)
-      console.log(this.company)
-      console.log(this.mobile)
-      console.log(this.realname)
       if (
         !this.bookingTime ||
         !this.company ||

@@ -128,8 +128,6 @@ export default {
         });
     },
     formSubmit(e) {
-      console.log(this.phoneNumber);
-      console.log(this.code);
       if (!this.phoneNumber) {
         wx.showToast({
           title: "未输入手机号",
@@ -187,8 +185,6 @@ export default {
                 duration: 1500
               });
               store.state.mobile = this.phoneNumber
-              console.log('store.state.mobile')
-              console.log(store.state.mobile)
               setTimeout(() => {
                 wx.navigateBack({
                   delta: 1

@@ -51,8 +51,6 @@ export default {
         .then(res => {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (bussData) {
               store.state.consumerHotline = bussData
             } else {
@@ -70,7 +68,6 @@ export default {
     },
     jump() {
       const url = '../makeAnAppointC/main';
-      console.log(url);
       wx.navigateTo({ url });
     },
     call() {

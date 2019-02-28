@@ -70,8 +70,6 @@ export default {
   components: {},
 
   mounted() {
-    console.log("this.$root.$mp.query");
-    console.log(this.$root.$mp.query);
     var params = this.$root.$mp.query;
     this.degree = params.degree;
     this.maxSeat = params.maxSeat == '0'?'':parseInt(params.maxSeat); // 最大人数
@@ -88,7 +86,6 @@ export default {
       this.getList();
     },
     getList() {
-      console.log("getList");
       let reqUrl = this.$API.BUSINESS.OFFICEROOM.SMARTPAGE;
       this.$myRequest(
         reqUrl,
@@ -137,7 +134,6 @@ export default {
     },
     jumpDetail(item) {
       const url = "../officeDetail/main?id=" + item.id;
-      console.log(url);
       wx.navigateTo({ url });
     },
     jumpIndex(item) {

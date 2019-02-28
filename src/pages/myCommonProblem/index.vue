@@ -29,15 +29,12 @@ export default {
   },
   methods: {
     getList() {
-      console.log("getList");
       let reqUrl = this.$API.BUSINESS.USER.QUESTION;
       this.$myRequestGet(reqUrl, {}, {})
         .then(res => {
           if (res.data.status === 200) {
             this.isLoadingList = false;
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (bussData && bussData.length > 0) {
               this.list = bussData
             }

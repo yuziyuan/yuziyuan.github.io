@@ -117,11 +117,9 @@ export default {
     jumpChangePhone() {
       if (this.mobile) {
         const url = "../changePhone/main";
-        console.log(url);
         wx.navigateTo({ url });
       } else {
         const url = "../bindPhoneInfo/main";
-        console.log(url);
         wx.navigateTo({ url });
       }
     },

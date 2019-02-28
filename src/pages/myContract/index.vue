@@ -63,7 +63,6 @@ export default {
       this.getList();
     },
     getList() {
-      console.log("getList");
       let reqUrl = this.$API.BUSINESS.USER.SINGING;
       this.$myRequest(
         reqUrl,
@@ -78,8 +77,6 @@ export default {
             this.isLoadingList = false;
             this.pageIndex++;
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (bussData && bussData.length > 0) {
               bussData.forEach(element => {
                 this.list.push({
@@ -97,7 +94,6 @@ export default {
             } else {
               this.listIsOver = true;
             }
-            console.log(this.list);
           }
         })
         .catch(error => {

@@ -47,7 +47,7 @@ import store from "@/store";
 import QQMapWX from "../../utils/qqmap";
 var qqmapsdk;
 qqmapsdk = new QQMapWX({
-  key: "T5KBZ-BLY6V-XYSPD-UNLWC-4WAUS-TVFB4"
+  key: "MJSBZ-N7NCJ-6SYFC-F6JNJ-J76R7-A4BYI"
 });
 export default {
   data() {
@@ -124,7 +124,6 @@ export default {
       wx.getLocation({
         type: "wgs84",
         success: function(res) {
-          console.log(res);
           var latitude = res.latitude; // 纬度
           var longitude = res.longitude; // 经度
           var speed = res.speed;
@@ -135,28 +134,23 @@ export default {
               longitude: res.longitude
             },
             success: function(res) {
-              console.error(res);
               var city = res.result.address_component.city.substr(
                 0,
                 res.result.address_component.city.length - 1
               );
-              console.log(city);
               store.state.titleCity = city
               store.state.chooseStatus = true
               store.state.chooseStatus2 = false //定位成功
-              console.log(store.state.chooseStatus);
               store.state.isloadingCity= false
               wx.hideLoading();
             },
             fail: function(error) {
-              // console.error(error);
               wx.hideLoading();
             }
           });
         },
         fail(error) {
           store.state.chooseStatus = false//定位失败
-          console.log('store.state.chooseStatus false')
           store.state.isloadingCity= false
           wx.hideLoading();
         }
@@ -164,14 +158,12 @@ export default {
     },
     jumpIndex2() {
       var _this = this;
-      console.log(_this.titleCity)
       //调用地址解析接口
       qqmapsdk.geocoder({
         //获取表单传入地址
         address: _this.titleCity, //地址参数，例：固定地址，address: '北京市海淀区彩和坊路海淀西大街74号'
         success: function(res) {
           //成功后的回调
-          console.log(res);
           var res = res.result;
           var latitude = res.location.lat;
           var longitude = res.location.lng;
@@ -190,6 +182,16 @@ export default {
               var index = nation_code.length
               var city_code = result.ad_info.city_code
               store.state.cityCode = city_code.substr(index,city_code.length)
+              
+              if(store.state.titleCity.indexOf('北京')> -1){
+                store.state.cityCode = '110100'
+              }else if(store.state.titleCity.indexOf('天津')> -1){
+                store.state.cityCode = '120100'
+              }else if(store.state.titleCity.indexOf('上海')> -1){
+                store.state.cityCode = '310100'
+              }else if(store.state.titleCity.indexOf('重庆')> -1){
+                store.state.cityCode = '500100'
+              }
               wx.navigateBack();
             },
             fail: function(error) {
@@ -213,7 +215,6 @@ export default {
         address: item.codeName, //地址参数，例：固定地址，address: '北京市海淀区彩和坊路海淀西大街74号'
         success: function(res) {
           //成功后的回调
-          console.log(res);
           var res = res.result;
           var latitude = res.location.lat;
           var longitude = res.location.lng;

@@ -49,9 +49,7 @@ export default {
         mask: true
       });
       var _this = this;
-      console.log("onSavePicClick");
       var downloadUrl = _this.img;
-      console.log("downloadUrl=" + downloadUrl);
       if (!wx.saveImageToPhotosAlbum) {
         wx.showModal({
           title: "提示",
@@ -132,6 +130,7 @@ export default {
             },
             fail(res) {
               wx.hideLoading();
+              console.log(res);
               console.log("保存图片：fail");
               wx.showToast({
                 icon: "",
@@ -147,14 +146,12 @@ export default {
             icon: "",
             title: "下载文件：fail"
           });
-          console.log("下载文件：fail");
           console.log(res);
         }
       });
     },
     jump() {
       const url = "../myRecommendCourtesyList/main";
-      console.log(url);
       wx.navigateTo({ url });
     },
     getRule() {
@@ -163,8 +160,6 @@ export default {
         .then(res => {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (bussData) {
               this.rule = bussData;
             } else {
@@ -186,8 +181,6 @@ export default {
         .then(res => {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (bussData) {
               this.img = bussData.wxCodeFileUrl;
             } else {

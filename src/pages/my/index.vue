@@ -124,9 +124,6 @@ export default {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
             this.myInfo.avatar = bussData.avatarUrl || "/static/images/8@2x.png";
-            console.log(bussData)
-            console.log(this.myInfo)
-            console.log(this.myInfo.avatar)
             this.myInfo.name = bussData.nickname || "昵称";
             store.state.mobile = bussData.mobile;
             wx.hideLoading();
@@ -151,12 +148,10 @@ export default {
     },
     jumpInfo() {
       const url = "../myInfo/main";
-      console.log(url);
       wx.navigateTo({ url });
     },
     jumpNews() {
       const url = "../myNews/main";
-      console.log(url);
       wx.navigateTo({ url });
     },
     jump(item) {
@@ -164,7 +159,6 @@ export default {
         this.showService = true;
       } else {
         const url = item.router;
-        console.log(url);
         wx.navigateTo({ url });
       }
     },
@@ -179,7 +173,6 @@ export default {
     JumpService() {
       // ../myService/main
       // const url = item.router;
-      // console.log(url);
       // wx.navigateTo({ url });
     }
   }

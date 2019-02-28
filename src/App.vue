@@ -11,15 +11,11 @@ export default {
       success(res) {
         if(res.system.indexOf('iOS') == -1) {
           store.state.isIphone = false
-          console.log('store.state.isIphone')
-          console.log(store.state.isIphone)
         }else {
           store.state.isIphone = true
         }
       }
     })
-
-    console.log('app created and cache logs by setStorageSync')
   }
 }
 </script>

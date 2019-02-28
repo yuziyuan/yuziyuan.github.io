@@ -29,8 +29,6 @@ export default {
         .then(res => {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (bussData) {
               this.p = bussData;
             } else {

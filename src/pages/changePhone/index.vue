@@ -73,7 +73,6 @@ export default {
 
   components: {},
   mounted() {
-    console.log(store.state.mobile)
     this.phoneNumberOld = store.state.mobile
   },
   methods: {
@@ -233,8 +232,6 @@ export default {
         });
     },
     formSubmit(e) {
-      console.log(this.phoneNumberOld);
-      console.log(this.codeOld);
       if (!this.phoneNumberOld) {
         wx.showToast({
           title: "未输入旧手机号",
@@ -317,8 +314,6 @@ export default {
         .then(res => {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
-            console.log("CHANGEMOBILE");
-            console.log(bussData);
             if (bussData) {
               wx.showToast({
                 title: "绑定成功",
@@ -326,8 +321,6 @@ export default {
                 duration: 1500
               });
               store.state.mobile = this.phoneNumberNew;
-              console.log("store.state.mobile");
-              console.log(store.state.mobile);
               setTimeout(() => {
                 wx.navigateBack({
                   delta: 1
@@ -348,8 +341,6 @@ export default {
         });
     },
     formSubmit2(e) {
-      console.log(this.phoneNumberNew);
-      console.log(this.codeNew);
       let reqUrl = this.$API.USER.BINDMOBILE; //绑定手机号POST
       this.$myRequest(
         reqUrl,
@@ -371,8 +362,6 @@ export default {
                 duration: 1500
               });
               store.state.mobile = this.phoneNumberNew;
-              console.log("store.state.mobile");
-              console.log(store.state.mobile);
               return;
               wx.navigateBack({
                 delta: 1

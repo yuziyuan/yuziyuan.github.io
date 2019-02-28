@@ -91,18 +91,12 @@ export default {
     inputChange() {},
     priceChange(e) {
       this.priceValue = e.target.value;
-      console.log("this.priceValue");
-      console.log(this.priceValue);
     },
     peopleCountChange(e) {
       this.peopleCountValue = e.target.value;
-      console.log("this.peopleCountValue");
-      console.log(this.peopleCountValue);
     },
     sizeChange(e) {
       this.sizeValue = e.target.value;
-      console.log("this.sizeValue");
-      console.log(this.sizeValue);
     },
     jumpList() {
       var params =
@@ -114,9 +108,7 @@ export default {
         this.priceValue * 1000 +
         "&wd=" +
         this.wd;
-      console.log(params);
       const url = "../inteSearchRoomList/main" + params;
-      console.log(url);
       wx.navigateTo({ url });
     }
   }

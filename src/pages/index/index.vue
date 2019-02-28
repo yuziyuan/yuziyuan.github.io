@@ -131,7 +131,7 @@ import store from "@/store";
 import QQMapWX from "../../utils/qqmap";
 var qqmapsdk;
 qqmapsdk = new QQMapWX({
-  key: "T5KBZ-BLY6V-XYSPD-UNLWC-4WAUS-TVFB4"
+  key: "MJSBZ-N7NCJ-6SYFC-F6JNJ-J76R7-A4BYI"
 });
 export default {
   data() {
@@ -257,15 +257,14 @@ export default {
     }
   },
   mounted() {
-    
+    this.getLocation();
   },
   created() {
     
   },
   onLoad(query) {
-    console.log('query')
-    console.log(query)
     this.landlordLogin(query);
+                  
   },
   methods: {
     getLocation() {
@@ -273,10 +272,8 @@ export default {
       wx.getLocation({
         type: "wgs84",
         success: function(res) {
-          console.log(res);
           var latitude = res.latitude; // 纬度
           var longitude = res.longitude; // 经度
-          console.log("getLocation");
           _this.latitude = latitude;
           _this.longitude = longitude;
           // 深圳经纬度:(114.06667,22.61667)<br>
@@ -290,20 +287,33 @@ export default {
             location: {
               latitude: res.latitude,
               longitude: res.longitude
+              // latitude: '39.91667',
+              // longitude: '116.41667'
             },
             success: function(res) {
-              console.error(res);
               var result = res.result
               store.state.titleCity = result.address_component.city.substr(0,res.result.address_component.city.length - 1)
               var nation_code = result.ad_info.nation_code
               var index = nation_code.length
               var city_code = result.ad_info.city_code
               store.state.cityCode = city_code.substr(index,city_code.length)
+              if(store.state.titleCity.indexOf('北京')> -1){
+                store.state.cityCode = '110100'
+              }else if(store.state.titleCity.indexOf('天津')> -1){
+                store.state.cityCode = '120100'
+              }else if(store.state.titleCity.indexOf('上海')> -1){
+                store.state.cityCode = '310100'
+              }else if(store.state.titleCity.indexOf('重庆')> -1){
+                store.state.cityCode = '500100'
+              }
             },
             fail: function(error) {
-              // console.error(error);
+              console.error(error);
+              
             }
           });
+        },
+        fail: function(error) {
         }
       });
     },
@@ -333,8 +343,6 @@ export default {
       var _this = this
       wx.getUserInfo({
         success(res2) {
-          console.log('res2');
-          console.log(res2);
           var rawData = JSON.parse(res2.rawData)
           let reqUrl = _this.$API.USER.SAVEUSERINFO;
           _this.$myRequest(reqUrl, {
@@ -351,7 +359,6 @@ export default {
             });
         },
         fail(error) {
-          console.log('error')
           console.log(error)
         }
       })
@@ -447,7 +454,6 @@ export default {
           })
           
           // 获取登录态成功
-          console.log(res);
           if (res.code) {
             let reqUrl = _this.$API.USER.LOGIN + res.code;
             const scene = decodeURIComponent(query.scene)
@@ -456,8 +462,6 @@ export default {
                 recommendCode: scene
               })
               .then(({ data }) => {
-                console.log('data')
-                console.log(data)
                 if (
                   data.status === 500 &&
                   data.msg.indexOf("Failed to find landlord data") !== -1
@@ -482,7 +486,6 @@ export default {
                   wx.hideLoading();
                   _this.getSipwer();
                   _this.getList();
-                  _this.getLocation();
                   _this.getMobile();
                   // wx.setStorageSync('userId', resData.userId)
                 }
@@ -503,8 +506,6 @@ export default {
       var _this = this
       wx.getUserInfo({
         success(res2) {
-          console.log('res2');
-          console.log(res2);
           var rawData = JSON.parse(res2.rawData)
           let reqUrl = _this.$API.USER.SAVEWXUSERINFO;
           _this.$myRequest(reqUrl, {
@@ -607,11 +608,8 @@ export default {
         .then(res => {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
-            console.log("bussData");
-            console.log(bussData);
             if (!bussData.mobile) {
               const url = "../bindPhone/main";
-              console.log(url);
               wx.navigateTo({ url });
             }
             wx.hideLoading();
@@ -623,27 +621,22 @@ export default {
     },
     jumpAddress() {
       const url = "../indexChooseCity/main";
-      console.log(url);
       wx.navigateTo({ url });
     },
     jumpSearch() {
       const url = "../indexSreach/main";
-      console.log(url);
       wx.navigateTo({ url });
     },
     jumpDetail(item) {
       const url = "../officeDetail/main?id=" + item.id;
-      console.log(url);
       wx.navigateTo({ url });
     },
     jumpList(item) {
       if (item.name === "写字楼") {
         const url = "../officeBuildingList/main";
-        console.log(url);
         wx.navigateTo({ url });
       }else if(item.name === '公司简介') {
         const url = "../indexCommInfo/main";
-        console.log(url);
         wx.navigateTo({ url });
       }
     }
