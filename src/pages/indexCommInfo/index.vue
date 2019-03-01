@@ -17,10 +17,10 @@ export default {
   components: {},
   
   mounted() {
-    
+    this.getCompanyProfile();
   },
   created() {
-    this.getCompanyProfile();
+    
   },
   methods: {
     getCompanyProfile() {

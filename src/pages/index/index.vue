@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <scroll-view scroll-y class="container" @scroll="scrollContainer" style="height: 100vh;" scroll-top="scrollTop">
     <div class="top" v-if="isAuthUserinfo">
       <div class="head">
         <div class="address" @click='jumpAddress'>
@@ -31,7 +31,7 @@
     </div>
     <div class="middle" v-if="isAuthUserinfo"></div>
     <div class="foot" v-if="isAuthUserinfo">
-      <div class="head">
+      <div class="head" :class='{"abso": isIphone &&(scrollY > 300)}'>
         <div v-for="(item, index) in brushConditionList" @click='brushConditionClick(item)' :key='index'>
           <span>{{item.name}}</span>
           <img :src="item.img" alt="">
@@ -123,7 +123,7 @@
         <button class="auth-btn" open-type="getUserInfo" @getuserinfo="handleBindUserInfo" @click="handleAuthBtnClick"></button>
       </section>
     </div>
-  </div>
+  </scroll-view>
 </template>
 
 <script>
@@ -245,13 +245,18 @@ export default {
       minTotalPrice: "", // 最小价格
       orderBy: "area", // 排序字段 = ['area', 'location', 'total_price'],
       orderSort: "ASC", // ['ASC', 'DESC'],
-      listIsOver: false
+      listIsOver: false,
+      scrollTop: '',
+      scrollY: '',
     };
   },
 
   components: {},
 
   computed: {
+    isIphone() {
+      return store.state.isIphone
+    },
     titleCity() {
       return store.state.titleCity;
     }
@@ -267,10 +272,24 @@ export default {
                   
   },
   methods: {
+    scrollContainer(e) {
+      var that = this;
+      this.showAreaBox = false
+      this.showPriceBox = false
+      this.showAddressList = false
+      this.showSortList = false
+      this.scrollY = e.target.scrollTop
+      // if() 300
+      // console.log(e)
+      console.log(e.target.scrollTop)
+      // that.setData({
+      //   scrollY: e.detail.scrollTop
+      // })
+    },
     getLocation() {
       var _this = this
       wx.getLocation({
-        type: "wgs84",
+        type: "gcj02",
         success: function(res) {
           var latitude = res.latitude; // 纬度
           var longitude = res.longitude; // 经度
@@ -735,6 +754,8 @@ export default {
       height: 43px;
       line-height: 43px;
       border-bottom: 1px solid #f0f0f0;
+      background: #fff;
+      z-index: 999;
       div {
         flex: 1;
         text-align: center;
@@ -756,10 +777,13 @@ export default {
         }
       }
     }
+    .abso{
+      position: fixed;
+      width: 100%;
+      top: 64px;
+      left: 0;
+    }
     .hide {
-      // position: absolute;
-      // top: 415px;
-      // left: 0;
       width: 100%;
       z-index: 2;
       ul {
@@ -835,6 +859,13 @@ export default {
           }
         }
       }
+    }
+    .abso ~ .hide{
+      position: fixed;
+      top: 107px;
+      background: #fff;
+      z-index: 999;
+      left: 0;
     }
     .middle {
       ul {

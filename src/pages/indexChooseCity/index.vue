@@ -122,7 +122,7 @@ export default {
       store.state.chooseStatus = true
       store.state.chooseStatus2 = true
       wx.getLocation({
-        type: "wgs84",
+        type: "gcj02",
         success: function(res) {
           var latitude = res.latitude; // 纬度
           var longitude = res.longitude; // 经度

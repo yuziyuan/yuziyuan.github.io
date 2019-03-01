@@ -114,17 +114,18 @@
           <div class="content">
             <video id="myVideo" :src="detail.houseVideo" controls></video>
             <!-- <img v-for="(item, index) in detail.imgUrls" :key='index' :src="item" alt="" @click='preImg'> -->
-            <map
-              id="map"
-              :longitude="latitude"
+
+            <!-- :longitude="latitude"
               :latitude="longitude"
-              scale="14"
-              :controls="controls"
-              :markers="markers"
-              :polyline="polyline"
-              show-location
-              style="width: 100%; height: 200px;"
-            ></map>
+              :longitude="114.06667"
+              :latitude="39.91667" -->
+              
+          <!-- latitude: 23.099994,
+          longitude: 113.32452, -->
+            <map id="map" 
+            :longitude="longitude" 
+            :latitude="latitude" 
+            scale="14" :controls="controls" :markers="markers" :polyline="polyline" show-location style="width: 100%; height: 200px;"></map>
             <!-- <map
               id="map"
               :longitude="latitude"
@@ -197,7 +198,7 @@ export default {
       detail: {
         imgUrls: [],
         collectionStatus: "",
-        isCollected: '',
+        isCollected: "",
         name: "",
         size: "",
         houseDetailNum: "",
@@ -208,42 +209,43 @@ export default {
         houseDetailManagementExpense: "",
         houseDetailOrientation: "",
         houseDetailAirConditionFee: "",
-        houseIntroduction:'',
-        houseVideo:'',
+        houseIntroduction: "",
+        houseVideo: "",
         houseMap: "",
-        address:"",
+        address: "",
         money: "",
         unit: "",
         advantageList: []
       },
-      officeId: '',
+      officeId: "",
       isMake: false,
       isloading: false,
-      latitude: '',
-      longitude: '',
+      latitude: "",
+      longitude: "",
       markers: [],
       polyline: [],
-      controls: [{
-        id: 1,
-        iconPath: '',
-        position: {
-          left: 0,
-          top: 300 - 50,
-          width: 50,
-          height: 50
-        },
-        clickable: true
-      }]
+      controls: [
+        // {
+        //   id: 1,
+        //   iconPath: "/static/images/3@2x.png",
+        //   position: {
+        //     left: 0,
+        //     top: 300 - 50,
+        //     width: 50,
+        //     height: 50
+        //   },
+        //   clickable: true
+        // }
+      ]
     };
   },
 
   components: {},
   mounted() {
-    this.officeId = this.$root.$mp.query.id
-    this.getDetail()
+    this.officeId = this.$root.$mp.query.id;
+    this.getDetail();
 
-    this.isMake = this.$root.$mp.query.isAppoint
-    
+    this.isMake = this.$root.$mp.query.isAppoint;
   },
   methods: {
     getLocation() {
@@ -257,6 +259,45 @@ export default {
           var res = res.result;
           _this.latitude = res.location.lat;
           _this.longitude = res.location.lng;
+          _this.markers= [
+            {
+              iconPath: "/static/images/map.png",
+              id: 0,
+              // latitude: 23.099994,
+              // longitude: 113.32452,
+              latitude: res.location.lat,
+              longitude: res.location.lng,
+              width: 18,
+              height: 18
+            }
+          ]
+          wx.getLocation({
+            type: "gcj02",
+            success: function(res2) {
+              var latitude = res2.latitude; // 纬度
+              var longitude = res2.longitude; // 经度
+              _this.polyline= [
+                {
+                  points: [
+                    {
+                      longitude: res.location.lng,
+                      latitude: res.location.lat
+                    },
+                    {
+                      longitude: longitude,
+                      latitude: latitude
+                    }
+                  ],
+                  color: "#FF0000DD",
+                  width: 2,
+                  dottedLine: true
+                }
+              ]
+            },
+            fail: function(error) {
+            }
+          });
+          
         },
         fail: function(error) {
           console.error(error);
@@ -270,47 +311,47 @@ export default {
       wx.previewImage({
         current: this.houseMap, // 当前显示图片的http链接
         urls: [this.houseMap] // 需要预览的图片http链接列表
-      })
+      });
     },
     getDetail() {
       wx.showLoading({ title: "加载中" });
-      let reqUrl = this.$API.BUSINESS.OFFICEROOM.DETIAL+this.officeId;
+      let reqUrl = this.$API.BUSINESS.OFFICEROOM.DETIAL + this.officeId;
       this.$myRequestGet(reqUrl, {}, {})
         .then(res => {
           if (res.data.status === 200) {
-            this.isloading = true
+            this.isloading = true;
             wx.hideLoading();
             let bussData = res.data.data.bussData;
             if (bussData) {
               this.detail = {
-                imgUrls: bussData.images.map((item)=>{
-                  return item.fileUrl
+                imgUrls: bussData.images.map(item => {
+                  return item.fileUrl;
                 }),
-                collectionStatus: bussData.isCollected? "/static/images/coll1.png":"/static/images/coll0.png",
+                collectionStatus: bussData.isCollected
+                  ? "/static/images/coll1.png"
+                  : "/static/images/coll0.png",
                 isCollected: bussData.isCollected,
                 name: bussData.name,
                 size: bussData.area,
                 houseDetailNum: bussData.roomNo,
                 houseDetailWorkstation: bussData.seat,
-                houseDetailAcreage: bussData.area+"㎡",
+                houseDetailAcreage: bussData.area + "㎡",
                 houseDetailDecoration: bussData.decoration,
                 houseDetailPattern: bussData.structure,
-                houseDetailManagementExpense: bussData.managementFee+"元/㎡",
+                houseDetailManagementExpense: bussData.managementFee + "元/㎡",
                 houseDetailOrientation: bussData.face,
                 houseDetailAirConditionFee: bussData.airConditionerFee,
-                houseIntroduction:
-                  bussData.introduce,
-                houseVideo:bussData.videoUrl,
+                houseIntroduction: bussData.introduce,
+                houseVideo: bussData.videoUrl,
                 houseMap: "/static/images/map.jpg",
-                address:
-                  bussData.detailAddress,
+                address: bussData.detailAddress,
                 money: bussData.totalPrice,
                 unit: bussData.unitPrice,
-                advantageList: bussData.tags.map((item)=>{
-                  return item.name
-                }),
-              }
-              this.getLocation()
+                advantageList: bussData.tags.map(item => {
+                  return item.name;
+                })
+              };
+              this.getLocation();
             }
           }
         })
@@ -318,19 +359,19 @@ export default {
           console.log("pdf 2 png error: ", error);
         });
     },
-    collAndUncoll(){
-      let reqUrl = this.$API.BUSINESS.USER.COLLECT+this.officeId;
+    collAndUncoll() {
+      let reqUrl = this.$API.BUSINESS.USER.COLLECT + this.officeId;
       this.$myRequestGet(reqUrl, {}, {})
         .then(res => {
           if (res.data.status === 200) {
             let bussData = res.data.data.bussData;
-            if(bussData) {
-              if(this.detail.isCollected) {
-                this.detail.collectionStatus = "/static/images/coll0.png"
-                this.detail.isCollected = !this.detail.isCollected
-              }else {
-                this.detail.collectionStatus = "/static/images/coll1.png"
-                this.detail.isCollected = !this.detail.isCollected
+            if (bussData) {
+              if (this.detail.isCollected) {
+                this.detail.collectionStatus = "/static/images/coll0.png";
+                this.detail.isCollected = !this.detail.isCollected;
+              } else {
+                this.detail.collectionStatus = "/static/images/coll1.png";
+                this.detail.isCollected = !this.detail.isCollected;
               }
             }
           }
@@ -340,7 +381,7 @@ export default {
         });
     },
     jumpMakeP() {
-      const url = "../makeAnAppoint/main?id="+this.officeId;
+      const url = "../makeAnAppoint/main?id=" + this.officeId;
       wx.navigateTo({ url });
     }
   },
@@ -547,7 +588,7 @@ export default {
         }
       }
     }
-    cover-view{
+    cover-view {
       position: fixed;
       bottom: 0;
       left: 0;
@@ -560,11 +601,11 @@ export default {
       text-align: center;
       border-radius: 0;
     }
-    .make{
-      background-color: #16509B;
+    .make {
+      background-color: #16509b;
     }
-    .maked{
-      background-color:#B1B1B1;
+    .maked {
+      background-color: #b1b1b1;
     }
   }
 }

@@ -74,7 +74,7 @@ for (let i = 0; i < 60; i++) {
 var date2 = new Date()
 var y = date2.getFullYear()+1
 var m = date2.getMonth()
-var d = date2.getDate()
+var d = date2.getDate()-1
 var hh = date2.getHours()
 var mm = date2.getMinutes()
 export default {
