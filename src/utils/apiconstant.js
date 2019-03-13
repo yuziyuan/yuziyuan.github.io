@@ -17,9 +17,10 @@ const API = {
     GETCITY: '/mini/user/get_city' ,// 
   },
   BASE:{
-    MINIUPLOADFILE: 'base/sys/mini/miniUploadFile'
+    MINIUPLOADFILE: 'base/sys/mini/miniUploadFile',
+    FINDDISTRICT: 'base/sys/app/findDistrict',
   },
-  BUSINESS: {
+  BUSINESS: { 
     OFFICEROOM: {
       PAGE: 'mini/office/room/page',
       SMARTPAGE: 'mini/office/room/smart/page',

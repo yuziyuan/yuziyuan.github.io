@@ -5,7 +5,7 @@
         <swiper class="swiper-box" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" indicator-active-color='#F90432' indicator-color='#ffffff'>
           <block v-for="(item, index) in detail.imgUrls" :key='index'>
             <swiper-item>
-              <img :src="item" alt="" mode='aspectFill'>
+              <img :src="item" alt="" mode='aspectFill' @click='lookImg(item)'>
             </swiper-item>
           </block>
         </swiper>
@@ -112,34 +112,21 @@
             房源视频
           </h3>
           <div class="content">
-            <video id="myVideo" :src="detail.houseVideo" controls></video>
-            <!-- <img v-for="(item, index) in detail.imgUrls" :key='index' :src="item" alt="" @click='preImg'> -->
-
-            <!-- :longitude="latitude"
-              :latitude="longitude"
-              :longitude="114.06667"
-              :latitude="39.91667" -->
-              
-          <!-- latitude: 23.099994,
-          longitude: 113.32452, -->
-            <map id="map" 
-            :longitude="longitude" 
-            :latitude="latitude" 
-            scale="14" :controls="controls" :markers="markers" :polyline="polyline" show-location style="width: 100%; height: 200px;"></map>
-            <!-- <map
-              id="map"
-              :longitude="latitude"
-              :latitude="longitude"
-              scale="14"
-              show-location
-              style="width: 100%; height: 199px;"
-            ></map> -->
+            <video v-show="detail.houseVideo" id="myVideo" @fullscreenchange='fullscreenchange' :src="detail.houseVideo" controls></video>
+            <map id="map" @tap='tapMap' :longitude="longitude" :latitude="latitude" scale="14" :markers="markers" :polyline="polyline" show-location style="width: 100%; height: 200px;">
+              <!-- <cover-view>
+              <cover-image class="img" src="/static/images/3@2x.png" />
+            </cover-view> -->
+            </map>
           </div>
         </div>
       </div>
-      <cover-view v-show='!isMake' class='make' @click='jumpMakeP'>
+      <cover-view v-show='!isMake && !isFullScreen' class='make' @click='jumpMakeP'>
         预约看房
       </cover-view>
+      <button v-show='!isMake && isFullScreen' class='make' @click='jumpMakeP'>
+        预约看房
+      </button>
       <cover-view v-show='isMake' class='maked'>
         已预约
       </cover-view>
@@ -236,7 +223,9 @@ export default {
         //   },
         //   clickable: true
         // }
-      ]
+      ],
+      isFullScreen: false,
+      mapTitile: ''
     };
   },
 
@@ -248,6 +237,18 @@ export default {
     this.isMake = this.$root.$mp.query.isAppoint;
   },
   methods: {
+    lookImg(item) {
+      if (this.detail.imgUrls.length > 0) {
+        wx.previewImage({
+          current: item, // 当前显示图片的http链接
+          urls: this.detail.imgUrls // 需要预览的图片http链接列表
+        });
+      }
+    },
+    fullscreenchange(e) {
+      console.log(e);
+      this.isFullScreen = e.target.fullScreen;
+    },
     getLocation() {
       var _this = this;
       //调用地址解析接口
@@ -256,10 +257,13 @@ export default {
         address: _this.detail.address, //地址参数，例：固定地址，address: '北京市海淀区彩和坊路海淀西大街74号'
         success: function(res) {
           //成功后的回调
+          console.log("1112");
+          console.log(res);
           var res = res.result;
           _this.latitude = res.location.lat;
           _this.longitude = res.location.lng;
-          _this.markers= [
+          _this.mapTitile = res.title;
+          _this.markers = [
             {
               iconPath: "/static/images/map.png",
               id: 0,
@@ -270,13 +274,13 @@ export default {
               width: 18,
               height: 18
             }
-          ]
+          ];
           wx.getLocation({
             type: "gcj02",
             success: function(res2) {
               var latitude = res2.latitude; // 纬度
               var longitude = res2.longitude; // 经度
-              _this.polyline= [
+              _this.polyline = [
                 {
                   points: [
                     {
@@ -292,12 +296,10 @@ export default {
                   width: 2,
                   dottedLine: true
                 }
-              ]
+              ];
             },
-            fail: function(error) {
-            }
+            fail: function(error) {}
           });
-          
         },
         fail: function(error) {
           console.error(error);
@@ -306,6 +308,28 @@ export default {
           console.log(res);
         }
       });
+    },
+    tapMap() {
+      var _this = this
+      console.log(_this.latitude)
+      console.log(_this.longitude)
+      wx.showModal({
+        title: '提示',
+        content: '是否打开本地地图？',
+        success(res) {
+          if (res.confirm) {
+            console.log('用户点击确定')
+            wx.openLocation({//​使用微信内置地图查看位置。
+              latitude: _this.latitude,//要去的纬度-地址
+              longitude: _this.longitude,//要去的经度-地址
+              name: _this.mapTitile,
+              address:_this.mapTitile
+            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
+      })
     },
     preImg() {
       wx.previewImage({
@@ -392,7 +416,7 @@ export default {
 
 <style scoped lang='less'>
 .container {
-  padding-bottom: 100px;
+  padding-bottom: 50px;
   .top {
     margin: 15px;
     position: relative;
@@ -588,7 +612,8 @@ export default {
         }
       }
     }
-    cover-view {
+    cover-view,
+    button {
       position: fixed;
       bottom: 0;
       left: 0;
@@ -600,6 +625,7 @@ export default {
       font-size: 17px;
       text-align: center;
       border-radius: 0;
+      z-index: 9999;
     }
     .make {
       background-color: #16509b;

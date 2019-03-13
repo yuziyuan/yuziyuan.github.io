@@ -1,5 +1,5 @@
 <template>
-  <scroll-view scroll-y class="container" @scroll="scrollContainer" style="height: 100vh;" scroll-top="scrollTop">
+  <scroll-view scroll-y class="container" @scroll="scrollContainer" style="height: 100vh;" scroll-top="scrollTop" @scrolltolower="lower">
     <div class="top" v-if="isAuthUserinfo">
       <div class="head">
         <div class="address" @click='jumpAddress'>
@@ -31,7 +31,8 @@
     </div>
     <div class="middle" v-if="isAuthUserinfo"></div>
     <div class="foot" v-if="isAuthUserinfo">
-      <div class="head" :class='{"abso": isIphone &&(scrollY > 300)}'>
+      <div class="head" :class='{"abso": isIphone &&(scrollY > 300)&&officeList.length > 2}'>
+      <!-- <div class="head"> -->
         <div v-for="(item, index) in brushConditionList" @click='brushConditionClick(item)' :key='index'>
           <span>{{item.name}}</span>
           <img :src="item.img" alt="">
@@ -54,10 +55,18 @@
       <div class="hide" v-show="showPriceBox">
         <div class="formBox">
           <div class="inputBox">
+            <span class='unit unit1'>总价</span>
             <input type="number" v-model="minTotalPrice">
             <span class='line'></span>
             <input type="number" v-model="maxTotalPrice">
-            <span class='unit'>元</span>
+            <span class='unit'>元/月</span>
+          </div>
+          <div class="inputBox">
+            <span class='unit unit1'>单价</span>
+            <input type="number" v-model="minUnitPrice">
+            <span class='line'></span>
+            <input type="number" v-model="maxUnitPrice">
+            <span class='unit'>元/㎡</span>
           </div>
           <div class="btn-box">
             <a @click='reset("price")' class="weui-btn weui-btn_plain-default">重置</a>
@@ -68,7 +77,7 @@
       <div class="hide" v-show="showAddressList">
         <ul>
           <li v-for="(item, index) in cityList" :key='index' @click='sortAddress(item)'>
-            {{item.name}}
+            {{item.value}}
           </li>
         </ul>
       </div>
@@ -80,7 +89,7 @@
         </ul>
       </div>
       <div class="middle">
-        <scroll-view scroll-y style="height: 624px;" @scrolltolower="lower">
+        <!-- <scroll-view scroll-y @scroll="scrollUl" style="height: 624px;" @scrolltolower="lower"> -->
           <ul>
             <li v-for="(item, index) in officeList" :key='index' @click='jumpDetail(item)'>
               <img :src="item.img" alt="" mode='aspectFill'>
@@ -110,7 +119,7 @@
               已加载完全
             </div>
           </ul>
-        </scroll-view>
+        <!-- </scroll-view> -->
       </div>
     </div>
     <div class="auth-box" v-if="!isAuthUserinfo">
@@ -204,31 +213,31 @@ export default {
         }
       ],
       cityList: [
-        {
-          name: "北京",
-          longitude: 114.06667,
-          latitude: 39.91667
-        },
-        {
-          name: "上海",
-          longitude: 121.43333,
-          latitude: 22.61667
-        },
-        {
-          name: "广州",
-          longitude: 113.23333,
-          latitude: 34.5
-        },
-        {
-          name: "深圳",
-          longitude: 114.06667,
-          latitude: 22.61667
-        },
-        {
-          name: "成都",
-          longitude: 104.06667,
-          latitude: 30.66667
-        }
+        // {
+        //   name: "北京",
+        //   longitude: 114.06667,
+        //   latitude: 39.91667
+        // },
+        // {
+        //   name: "上海",
+        //   longitude: 121.43333,
+        //   latitude: 22.61667
+        // },
+        // {
+        //   name: "广州",
+        //   longitude: 113.23333,
+        //   latitude: 34.5
+        // },
+        // {
+        //   name: "深圳",
+        //   longitude: 114.06667,
+        //   latitude: 22.61667
+        // },
+        // {
+        //   name: "成都",
+        //   longitude: 104.06667,
+        //   latitude: 30.66667
+        // }
       ],
       isLoadingList: false,
       showAreaBox: false,
@@ -243,11 +252,14 @@ export default {
       maxTotalPrice: "", // 最大价格
       minArea: "", // 最小面积
       minTotalPrice: "", // 最小价格
+      minUnitPrice: "", // 最小单价价格
+      maxUnitPrice: "", // 最大单价价格
       orderBy: "area", // 排序字段 = ['area', 'location', 'total_price'],
       orderSort: "ASC", // ['ASC', 'DESC'],
       listIsOver: false,
       scrollTop: '',
       scrollY: '',
+      adCode: ''
     };
   },
 
@@ -269,22 +281,27 @@ export default {
   },
   onLoad(query) {
     this.landlordLogin(query);
-                  
+  },
+  onShow(){
+    console.log('this.getCityList(store.state.cityCode)')
+    // this.getCityList(store.state.cityCode)
   },
   methods: {
     scrollContainer(e) {
-      var that = this;
+      if(this.officeList.length> 2) {
+        this.showAreaBox = false
+        this.showPriceBox = false
+        this.showAddressList = false
+        this.showSortList = false
+      }
+      console.log(e.target.scrollTop)
+      this.scrollY = e.target.scrollTop
+    },
+    scrollUl() {
       this.showAreaBox = false
       this.showPriceBox = false
       this.showAddressList = false
       this.showSortList = false
-      this.scrollY = e.target.scrollTop
-      // if() 300
-      // console.log(e)
-      console.log(e.target.scrollTop)
-      // that.setData({
-      //   scrollY: e.detail.scrollTop
-      // })
     },
     getLocation() {
       var _this = this
@@ -295,11 +312,6 @@ export default {
           var longitude = res.longitude; // 经度
           _this.latitude = latitude;
           _this.longitude = longitude;
-          // 深圳经纬度:(114.06667,22.61667)<br>
-          //北京市市中心经纬度:(116.41667,39.91667)<br>
-          //上海市区经纬度:(121.43333,34.50000)<br>
-          //广州经纬度:(113.23333,23.16667)<br>
-          //成都经纬度:(104.06667,30.66667)<br>
           var speed = res.speed;
           var accuracy = res.accuracy;
           qqmapsdk.reverseGeocoder({
@@ -325,6 +337,7 @@ export default {
               }else if(store.state.titleCity.indexOf('重庆')> -1){
                 store.state.cityCode = '500100'
               }
+              _this.getCityList(store.state.cityCode)
             },
             fail: function(error) {
               console.error(error);
@@ -333,6 +346,74 @@ export default {
           });
         },
         fail: function(error) {
+        }
+      });
+    },
+    getCityList(cityCode) {
+      
+      let reqUrl = this.$API.BASE.FINDDISTRICT
+      this.$myRequestGet(reqUrl, {
+        cityCode: cityCode
+      }, {})
+        .then(res => {
+          if (res.data.status === 200) {
+            let bussData = res.data.data.bussData;
+            if (bussData) {
+              this.cityList = bussData
+              console.log(this.cityList)
+            } else {
+              wx.showToast({
+                title: bussData,
+                icon: "none",
+                duration: 1500
+              });
+            }
+          }
+        })
+        .catch(error => {
+          console.log("pdf 2 png error: ", error);
+        });
+      return
+      var array = store.state.wxCityList
+      var _this = this
+      var evenD = function(e,i) {
+        if( e.cid == cityCode) {
+          _this.cityList = e.districts
+          console.log(_this.cityList)
+        }
+        return e.cid == cityCode;
+      };
+
+      array.forEach(element => {
+        element.citys.some(evenD)
+      });
+    },
+    getCityListLatLng(item) {
+      console.log(this.titleCity+'市'+item.dname)
+      var _this = this;
+      //调用地址解析接口
+      qqmapsdk.geocoder({
+        //获取表单传入地址
+        address: this.titleCity+'市'+item.dname, //地址参数，例：固定地址，address: '北京市海淀区彩和坊路海淀西大街74号'
+        success: function(res) {
+          //成功后的回调
+          console.log(res)
+          var res = res.result;
+          var latitude = res.location.lat;
+          var longitude = res.location.lng;
+          _this.latitude = latitude;
+          _this.longitude = longitude;
+          _this.listIsOver = false;
+          _this.pageIndex = 1;
+          _this.isLoadingList = true;
+          _this.officeList = [];
+          _this.getList();
+        },
+        fail: function(error) {
+          console.error(error);
+        },
+        complete: function(res) {
+          console.log(res);
         }
       });
     },
@@ -406,6 +487,7 @@ export default {
       }
     },
     lower(e) {
+      console.log('lower')
       if (this.isLoadingList || this.listIsOver) return;
       this.isLoadingList = true;
       this.getList();
@@ -426,6 +508,8 @@ export default {
       } else {
         this.maxTotalPrice = "";
         this.minTotalPrice = "";
+        this.minUnitPrice = "";
+        this.maxUnitPrice = "";
       }
     },
     sortKindof(item) {
@@ -443,13 +527,16 @@ export default {
       // 城市
       this.orderBy = "location";
       this.showAddressList = false;
-      this.latitude = item.latitude;
-      this.longitude = item.longitude;
+      // this.latitude = latitude;
+      // this.longitude = longitude;
+      this.adCode = item.key;
       this.listIsOver = false;
       this.pageIndex = 1;
       this.isLoadingList = true;
       this.officeList = [];
       this.getList();
+      
+      this.getCityListLatLng(item)
     },
     landlordLogin(query) {
       var _this = this
@@ -572,14 +659,18 @@ export default {
       this.$myRequest(
         reqUrl,
         {
+          isRecommend:1,
+          adCode: parseInt(this.adCode),
           pageIndex: this.pageIndex,
           pageSize: this.pageSize,
-          latitude: this.latitude, // 用户目前纬度
-          longitude: this.longitude, // 用户目前经度
+          // latitude: this.latitude, // 用户目前纬度
+          // longitude: this.longitude, // 用户目前经度
           maxArea: this.maxArea, // 最大面积
           maxTotalPrice: this.maxTotalPrice, // 最大价格
           minArea: this.minArea, // 最小面积
           minTotalPrice: this.minTotalPrice, // 最小价格
+          // minUnitPrice: this.minUnitPrice, // 最小单价价格
+          // maxUnitPrice: this.maxUnitPrice, // 最大单价价格
           orderBy: this.orderBy, // 排序字段 = ['area', 'location', 'total_price'],
           orderSort: this.orderSort // ['ASC', 'DESC'],
         },
@@ -788,6 +879,9 @@ export default {
       z-index: 2;
       ul {
         box-shadow: 0px 2px 2px #999;
+        overflow-y:scroll;
+        height:auto;
+        max-height:300px;
         li {
           height: 41px;
           line-height: 41px;
@@ -808,6 +902,9 @@ export default {
         .inputBox {
           padding-top: 20px;
           margin: 0px 20px 40px 20px;
+          height: 40px;
+          line-height: 40px;
+          text-align:center;
           input {
             background-color: #fbfbfb;
             border: 1px solid #e1e1e1;
@@ -815,7 +912,7 @@ export default {
             font-size: 15px;
             font-family: PingFang-SC-Regular;
             display: inline-block;
-            width: 110px;
+            width: 70px;
             height: 40px;
             line-height: 40px;
             text-align: center;
@@ -827,7 +924,7 @@ export default {
             background: #e1e1e1;
             margin: 0 15px;
             position: relative;
-            top: -20px;
+            // top: -20px;
           }
           .unit {
             margin-left: 15px;
@@ -835,7 +932,11 @@ export default {
             color: #000;
             font-size: 15px;
             position: relative;
-            top: -17px;
+            // top: -17px;
+          }
+          .unit1{
+            margin-left: 0px;
+            margin-right: 15px;
           }
         }
         .btn-box {

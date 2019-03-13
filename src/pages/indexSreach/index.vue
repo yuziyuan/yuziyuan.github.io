@@ -60,7 +60,7 @@
         </ul>
       </div>
       <div class="middle">
-        <scroll-view scroll-y style="height: 624px;" @scrolltolower="lower">
+        <scroll-view @scroll="scrollUl" scroll-y style="height: 624px;" @scrolltolower="lower">
           <ul>
             <li v-for="(item, index) in officeList" :key='index' @click='jumpDetail(item)'>
               <img :src="item.img" alt="" mode='aspectFill'>
@@ -207,6 +207,12 @@ export default {
     this.getList();
   },
   methods: {
+    scrollUl() {
+      this.showAreaBox = false
+      this.showPriceBox = false
+      this.showAddressList = false
+      this.showSortList = false
+    },
     inputChange() {
       this.officeList = [];
       this.pageIndex = 1;

@@ -175,6 +175,7 @@ export default {
         font-family: PingFang-SC-Medium;
         color: #050505;
         font-size: 15px;
+        margin-left: 10px;
       }
     }
     .div1,
@@ -184,11 +185,11 @@ export default {
         font-family: PingFang-SC-Regular;
         color: #999;
         font-size: 13px;
-        margin: 6px 0 8px 9px;
+        margin: 6px 0 8px 19px;
         display: inline;
       }
       slider {
-        margin-left: 18px;
+        margin-left: 28px;
       }
     }
     .div2 {
@@ -212,7 +213,7 @@ export default {
         text-align: right;
       }
       slider {
-        margin: 15px 25px 15px 15px;
+        margin: 15px 25px 15px 28px;
       }
       ul {
         display: flex;

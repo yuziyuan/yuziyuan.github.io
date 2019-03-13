@@ -227,6 +227,10 @@ export default {
         },
         fail: function(error) {
           console.error(error);
+          wx.showToast({
+            title: error.message,
+            icon: "none"
+          });
         },
         complete: function(res) {
           console.log(res);
