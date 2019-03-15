@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="isloading">
+  <div class="container" v-if="isloading" :class='{"notHavePadding":!isIphone}'>
     <div class="top">
       <div>
         <swiper class="swiper-box" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" indicator-active-color='#F90432' indicator-color='#ffffff'>
@@ -103,7 +103,8 @@
             房源介绍
           </h3>
           <div class="content">
-            <p>{{detail.houseIntroduction}}</p>
+            <!-- <p>{{}}</p> -->
+            <rich-text class='p' :nodes='detail.houseIntroduction'></rich-text>
           </div>
         </div>
         <div class="three">
@@ -113,7 +114,7 @@
           </h3>
           <div class="content">
             <video v-show="detail.houseVideo" id="myVideo" @fullscreenchange='fullscreenchange' :src="detail.houseVideo" controls></video>
-            <map id="map" @tap='tapMap' :longitude="longitude" :latitude="latitude" scale="14" :markers="markers" :polyline="polyline" show-location style="width: 100%; height: 200px;">
+            <map id="map" @tap='tapMap' :longitude="detail.longitude" :latitude="detail.latitude" scale="14" :markers="markers" :polyline="polyline" show-location style="width: 100%; height: 200px;">
               <!-- <cover-view>
               <cover-image class="img" src="/static/images/3@2x.png" />
             </cover-view> -->
@@ -149,40 +150,6 @@ export default {
       interval: 5000,
       duration: 1000,
       detail: {
-        imgUrls: [
-          "/static/images/1.jpg",
-          "/static/images/2.jpg",
-          "/static/images/3.jpg"
-        ],
-        collectionStatus: "/static/images/coll0.png",
-        name: "A栋203室",
-        size: "132",
-        houseDetailNum: "301",
-        houseDetailWorkstation: "120个",
-        houseDetailAcreage: "100㎡",
-        houseDetailDecoration: "精装",
-        houseDetailPattern: "正方形",
-        houseDetailManagementExpense: "15元/㎡",
-        houseDetailOrientation: "坐北朝南",
-        houseDetailAirConditionFee: "8元/㎡",
-        houseIntroduction:
-          "项目位于龙岗区龙城街道盛龙路与碧新路交叉口东南，总建筑面积约30万平，分两期开发，一期由底商、一栋人才公寓和2座住宅组成，其中住宅面积段建面约为75-89平，商业面积段建面约为36-72平。开发商是远洋地产控股有限公司，香港上市的国内前十五的开发商，有国企背景且之前是开发别墅项目的。",
-        houseVideo:
-          "http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400",
-        houseMap: "/static/images/map.jpg",
-        address:
-          "南山区粤海街道科慧路1号沛鸿大厦A2506南山区粤海街道科慧路1号沛鸿大厦A2506南山区粤海街道科慧路1号沛鸿大厦A2506南山区粤海街道科慧路1号沛鸿大厦A2506",
-        money: "123451",
-        unit: "3000",
-        advantageList: [
-          "共享办公",
-          "商务繁华",
-          "周边配套设施完善",
-          "车位充足",
-          "车位充足"
-        ]
-      },
-      detail: {
         imgUrls: [],
         collectionStatus: "",
         isCollected: "",
@@ -201,6 +168,8 @@ export default {
         houseMap: "",
         address: "",
         money: "",
+        latitude: "",
+        longitude: "",
         unit: "",
         advantageList: []
       },
@@ -211,24 +180,16 @@ export default {
       longitude: "",
       markers: [],
       polyline: [],
-      controls: [
-        // {
-        //   id: 1,
-        //   iconPath: "/static/images/3@2x.png",
-        //   position: {
-        //     left: 0,
-        //     top: 300 - 50,
-        //     width: 50,
-        //     height: 50
-        //   },
-        //   clickable: true
-        // }
-      ],
       isFullScreen: false,
-      mapTitile: ''
+      mapTitile1: '',
+      mapTitile2: ''
     };
   },
-
+  computed: {
+    isIphone() {
+      return store.state.isIphone
+    },
+  },
   components: {},
   mounted() {
     this.officeId = this.$root.$mp.query.id;
@@ -251,68 +212,55 @@ export default {
     },
     getLocation() {
       var _this = this;
-      //调用地址解析接口
-      qqmapsdk.geocoder({
-        //获取表单传入地址
-        address: _this.detail.address, //地址参数，例：固定地址，address: '北京市海淀区彩和坊路海淀西大街74号'
-        success: function(res) {
-          //成功后的回调
-          console.log("1112");
-          console.log(res);
-          var res = res.result;
-          _this.latitude = res.location.lat;
-          _this.longitude = res.location.lng;
-          _this.mapTitile = res.title;
-          _this.markers = [
+      console.log(_this.detail.latitude)
+      console.log(_this.detail.longitude)
+      _this.markers = [
+        {
+          iconPath: "/static/images/map.png",
+          id: 0,
+          // latitude: 23.099994,
+          // longitude: 113.32452,
+          latitude: _this.detail.latitude,
+          longitude: _this.detail.longitude,
+          width: 18,
+          height: 18
+        }
+      ];
+      wx.getLocation({
+        type: "gcj02",
+        success: function(res2) {
+          console.log('res2')
+          console.log(res2)
+          _this.polyline = [
             {
-              iconPath: "/static/images/map.png",
-              id: 0,
-              // latitude: 23.099994,
-              // longitude: 113.32452,
-              latitude: res.location.lat,
-              longitude: res.location.lng,
-              width: 18,
-              height: 18
+              points: [
+                {
+                  longitude: _this.detail.longitude,
+                  latitude: _this.detail.latitude
+                },
+                {
+                  longitude: res2.longitude,
+                  latitude: res2.latitude
+                },
+              ],
+              color: "#FF0000DD",
+              width: 2,
+              dottedLine: true
             }
           ];
-          wx.getLocation({
-            type: "gcj02",
-            success: function(res2) {
-              var latitude = res2.latitude; // 纬度
-              var longitude = res2.longitude; // 经度
-              _this.polyline = [
-                {
-                  points: [
-                    {
-                      longitude: res.location.lng,
-                      latitude: res.location.lat
-                    },
-                    {
-                      longitude: longitude,
-                      latitude: latitude
-                    }
-                  ],
-                  color: "#FF0000DD",
-                  width: 2,
-                  dottedLine: true
-                }
-              ];
-            },
-            fail: function(error) {}
-          });
+          
+          console.log( _this.markers)
+          console.log( _this.polyline)
         },
-        fail: function(error) {
-          console.error(error);
-        },
-        complete: function(res) {
-          console.log(res);
-        }
+        fail: function(error) {}
       });
     },
     tapMap() {
       var _this = this
-      console.log(_this.latitude)
-      console.log(_this.longitude)
+      console.log(_this.detail.latitude)
+      console.log(_this.detail.longitude)
+      console.log(_this.mapTitile1)
+      console.log(_this.mapTitile2)
       wx.showModal({
         title: '提示',
         content: '是否打开本地地图？',
@@ -320,10 +268,10 @@ export default {
           if (res.confirm) {
             console.log('用户点击确定')
             wx.openLocation({//​使用微信内置地图查看位置。
-              latitude: _this.latitude,//要去的纬度-地址
-              longitude: _this.longitude,//要去的经度-地址
-              name: _this.mapTitile,
-              address:_this.mapTitile
+              latitude: _this.detail.latitude,//要去的纬度-地址
+              longitude: _this.detail.longitude,//要去的经度-地址
+              name: _this.mapTitile1,
+              address:_this.mapTitile2
             })
           } else if (res.cancel) {
             console.log('用户点击取消')
@@ -365,16 +313,22 @@ export default {
                 houseDetailManagementExpense: bussData.managementFee + "元/㎡",
                 houseDetailOrientation: bussData.face,
                 houseDetailAirConditionFee: bussData.airConditionerFee,
-                houseIntroduction: bussData.introduce,
+                // houseIntroduction: bussData.introduce,
+                houseIntroduction: this.getRichText(bussData.introduce),
                 houseVideo: bussData.videoUrl,
                 houseMap: "/static/images/map.jpg",
                 address: bussData.detailAddress,
                 money: bussData.totalPrice,
                 unit: bussData.unitPrice,
+                latitude: bussData.latitude,
+                longitude: bussData.longitude,
                 advantageList: bussData.tags.map(item => {
                   return item.name;
                 })
+                
               };
+              this.mapTitile1 = bussData.name;
+              this.mapTitile2 = bussData.detailAddress;
               this.getLocation();
             }
           }
@@ -382,6 +336,17 @@ export default {
         .catch(error => {
           console.log("pdf 2 png error: ", error);
         });
+    },
+    getRichText(p) {
+      var p0
+      var r1 = '<font'
+      var r2 = "</font"
+      if (p) {
+        p0 = p.replace(/<font/g,'<span').replace(/\/font>/g,'/span>')
+      } 
+      console.log(p0)
+      console.log(p)
+      return p0
     },
     collAndUncoll() {
       let reqUrl = this.$API.BUSINESS.USER.COLLECT + this.officeId;
@@ -589,7 +554,7 @@ export default {
       }
       .two {
         .content {
-          p {
+          p,.p {
             font-family: PingFang-SC-Regular;
             color: #000;
             font-size: 12px;
@@ -634,5 +599,8 @@ export default {
       background-color: #b1b1b1;
     }
   }
+}
+.notHavePadding{
+  padding-bottom: 0;
 }
 </style>

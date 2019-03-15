@@ -190,7 +190,6 @@ export default {
     submit() {
       if (
         !this.bookingTime ||
-        !this.company ||
         !this.mobile ||
         !this.realname
       ) {

@@ -87,7 +87,7 @@ export default {
     }
   },
   components: {},
-  mounted() {
+  onShow() {
     this.pageIndex = 1
     this.officeList = []
     this.getList();

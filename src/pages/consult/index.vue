@@ -45,27 +45,7 @@ export default {
   components: {},
 
   methods: {
-    getConsumerHotline  () {
-      let reqUrl = this.$API.BUSINESS.USER.SYS+'consumerHotline';
-      this.$myRequestGet(reqUrl, {}, {})
-        .then(res => {
-          if (res.data.status === 200) {
-            let bussData = res.data.data.bussData;
-            if (bussData) {
-              store.state.consumerHotline = bussData
-            } else {
-              wx.showToast({
-                title: bussData,
-                icon: "none",
-                duration: 1500
-              });
-            }
-          }
-        })
-        .catch(error => {
-          console.log("pdf 2 png error: ", error);
-        });
-    },
+    
     jump() {
       const url = '../makeAnAppointC/main';
       wx.navigateTo({ url });
@@ -78,7 +58,7 @@ export default {
   },
 
   created() {
-    this.getConsumerHotline()
+    
   }
 };
 </script>

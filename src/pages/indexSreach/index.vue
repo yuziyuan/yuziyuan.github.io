@@ -12,9 +12,9 @@
     </div>
     <div class="foot">
       <div class="head">
-        <div v-for="(item, index) in brushConditionList" @click='brushConditionClick(item)' :key='index'>
+        <div v-for="(item, index) in brushConditionList" @click='brushConditionClick(item,index)' :key='index'>
           <span>{{item.name}}</span>
-          <img :src="item.img" alt="">
+          <img :src="item.img" :class='{"reserve1":index == brushConditionClickIndex}' alt="">
         </div>
       </div>
       <div class="hide" v-show="showAreaBox">
@@ -34,10 +34,18 @@
       <div class="hide" v-show="showPriceBox">
         <div class="formBox">
           <div class="inputBox">
+            <span class='unit unit1'>总价</span>
             <input type="number" v-model="minTotalPrice">
             <span class='line'></span>
             <input type="number" v-model="maxTotalPrice">
-            <span class='unit'>元</span>
+            <span class='unit'>元/月</span>
+          </div>
+          <div class="inputBox">
+            <span class='unit unit1'>单价</span>
+            <input type="number" v-model="minUnitPrice">
+            <span class='line'></span>
+            <input type="number" v-model="maxUnitPrice">
+            <span class='unit'>元/㎡</span>
           </div>
           <div class="btn-box">
             <a @click='reset("price")' class="weui-btn weui-btn_plain-default">重置</a>
@@ -48,7 +56,7 @@
       <div class="hide" v-show="showAddressList">
         <ul>
           <li v-for="(item, index) in cityList" :key='index' @click='sortAddress(item)'>
-            {{item.name}}
+            {{item.value}}
           </li>
         </ul>
       </div>
@@ -147,33 +155,7 @@ export default {
           orderSort: "DESC"
         }
       ],
-      cityList: [
-        {
-          name: "北京",
-          longitude: 114.06667,
-          latitude: 39.91667
-        },
-        {
-          name: "上海",
-          longitude: 121.43333,
-          latitude: 22.61667
-        },
-        {
-          name: "广州",
-          longitude: 113.23333,
-          latitude: 34.5
-        },
-        {
-          name: "深圳",
-          longitude: 114.06667,
-          latitude: 22.61667
-        },
-        {
-          name: "成都",
-          longitude: 104.06667,
-          latitude: 30.66667
-        }
-      ],
+      // cityList: store.state.cityAreaList,
       isLoadingList: false,
       showAreaBox: false,
       showPriceBox: false,
@@ -188,9 +170,13 @@ export default {
       maxTotalPrice: "", // 最大价格
       minArea: "", // 最小面积
       minTotalPrice: "", // 最小价格
+      minUnitPrice: "", // 最小单价价格
+      maxUnitPrice: "", // 最大单价价格
       orderBy: "area", // 排序字段 = ['area', 'location', 'total_price'],
       orderSort: "ASC", // ['ASC', 'DESC'],
-      listIsOver: false
+      listIsOver: false,
+      adCode: '',
+      brushConditionClickIndex: -1,
       // buildingId: ''
       // wd (string, optional): 关键词
     };
@@ -199,6 +185,9 @@ export default {
   computed: {
     isIphone() {
       return store.state.isIphone
+    },
+    cityList() {
+      return store.state.cityAreaList
     }
   },
   components: {},
@@ -218,7 +207,13 @@ export default {
       this.pageIndex = 1;
       this.getList();
     },
-    brushConditionClick(item) {
+    brushConditionClick(item,index) {
+      if(this.brushConditionClickIndex == index) {
+        this.brushConditionClickIndex = -1
+      }else {
+        this.brushConditionClickIndex = index
+      }
+      
       if (item.name === "面积") {
         this.showPriceBox = false;
         this.showSortList = false;
@@ -262,6 +257,8 @@ export default {
       } else {
         this.maxTotalPrice = "";
         this.minTotalPrice = "";
+        this.minUnitPrice = "";
+        this.maxUnitPrice = "";
       }
     },
     sortKindof(item) {
@@ -277,10 +274,11 @@ export default {
     },
     sortAddress(item) {
       // 城市
-      this.orderBy = "location";
+      this.orderBy = "";
       this.showAddressList = false;
-      this.latitude = item.latitude;
-      this.longitude = item.longitude;
+      // this.latitude = item.latitude;
+      // this.longitude = item.longitude;
+      this.adCode = item.key;
       this.listIsOver = false;
       this.pageIndex = 1;
       this.isLoadingList = true;
@@ -293,17 +291,21 @@ export default {
       this.$myRequest(
         reqUrl,
         {
-          cityCode: this.buildingId ? store.state.cityCode : "",
+          // cityCode: this.buildingId ? store.state.cityCode : "",cityCode
+          cityCode: store.state.cityCode,
           wd: this.wd,
+          adCode: parseInt(this.adCode),
           buildingId: this.buildingId,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize,
-          latitude: this.latitude, // 用户目前纬度
-          longitude: this.longitude, // 用户目前经度
+          // latitude: this.latitude, // 用户目前纬度
+          // longitude: this.longitude, // 用户目前经度
           maxArea: this.maxArea, // 最大面积
           maxTotalPrice: this.maxTotalPrice, // 最大价格
           minArea: this.minArea, // 最小面积
           minTotalPrice: this.minTotalPrice, // 最小价格
+          minUnitPrice: this.minUnitPrice, // 最小单价价格
+          maxUnitPrice: this.maxUnitPrice, // 最大单价价格
           orderBy: this.orderBy, // 排序字段 = ['area', 'location', 'total_price'],
           orderSort: this.orderSort // ['ASC', 'DESC'],
         },
@@ -428,6 +430,11 @@ export default {
           height: 5px;
           vertical-align: middle;
           margin-left: 5px;
+          transition: all .2s ease;
+        }
+        .reserve1{
+          transform: rotateX(180deg);
+          transition: all .2s ease;
         }
         &:last-child {
           img {
@@ -464,6 +471,9 @@ export default {
         .inputBox {
           padding-top: 20px;
           margin: 0px 20px 40px 20px;
+          height: 40px;
+          line-height: 40px;
+          text-align:center;
           input {
             background-color: #fbfbfb;
             border: 1px solid #e1e1e1;
@@ -471,7 +481,7 @@ export default {
             font-size: 15px;
             font-family: PingFang-SC-Regular;
             display: inline-block;
-            width: 110px;
+            width: 70px;
             height: 40px;
             line-height: 40px;
             text-align: center;
@@ -483,7 +493,7 @@ export default {
             background: #e1e1e1;
             margin: 0 15px;
             position: relative;
-            top: -20px;
+            // top: -20px;
           }
           .unit {
             margin-left: 15px;
@@ -491,7 +501,11 @@ export default {
             color: #000;
             font-size: 15px;
             position: relative;
-            top: -17px;
+            // top: -17px;
+          }
+          .unit1{
+            margin-left: 0px;
+            margin-right: 15px;
           }
         }
         .btn-box {

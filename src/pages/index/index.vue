@@ -259,7 +259,8 @@ export default {
       listIsOver: false,
       scrollTop: '',
       scrollY: '',
-      adCode: ''
+      adCode: '',
+      cityCode: '',
     };
   },
 
@@ -274,7 +275,7 @@ export default {
     }
   },
   mounted() {
-    this.getLocation();
+    
   },
   created() {
     
@@ -283,8 +284,20 @@ export default {
     this.landlordLogin(query);
   },
   onShow(){
-    console.log('this.getCityList(store.state.cityCode)')
-    // this.getCityList(store.state.cityCode)
+    if(store.state.cityCode) {
+      this.getCityList(store.state.cityCode)
+    }
+  },
+  watch:{
+    '$store.state.cityCode'() {
+      this.listIsOver = false;
+      this.pageIndex = 1; 
+      this.adCode = ''
+      this.cityCode = store.state.cityCode
+      this.isLoadingList = true;
+      this.officeList = [];
+      this.getList();
+    }
   },
   methods: {
     scrollContainer(e) {
@@ -294,7 +307,7 @@ export default {
         this.showAddressList = false
         this.showSortList = false
       }
-      console.log(e.target.scrollTop)
+      // console.log(e.target.scrollTop)
       this.scrollY = e.target.scrollTop
     },
     scrollUl() {
@@ -360,7 +373,11 @@ export default {
             let bussData = res.data.data.bussData;
             if (bussData) {
               this.cityList = bussData
-              console.log(this.cityList)
+              this.cityList.unshift({
+                key: '',
+                value: '全部'
+              })
+              store.state.cityAreaList = bussData
             } else {
               wx.showToast({
                 title: bussData,
@@ -379,7 +396,6 @@ export default {
       var evenD = function(e,i) {
         if( e.cid == cityCode) {
           _this.cityList = e.districts
-          console.log(_this.cityList)
         }
         return e.cid == cityCode;
       };
@@ -525,7 +541,7 @@ export default {
     },
     sortAddress(item) {
       // 城市
-      this.orderBy = "location";
+      this.orderBy = "";
       this.showAddressList = false;
       // this.latitude = latitude;
       // this.longitude = longitude;
@@ -591,8 +607,9 @@ export default {
                   wx.setStorageSync("sessionId", resData);
                   wx.hideLoading();
                   _this.getSipwer();
-                  _this.getList();
                   _this.getMobile();
+                  _this.getLocation();
+                  _this.getConsumerHotline()
                   // wx.setStorageSync('userId', resData.userId)
                 }
               })
@@ -607,6 +624,27 @@ export default {
           console.log("landlord wx.login error: ", err);
         }
       });
+    },
+    getConsumerHotline  () {
+      let reqUrl = this.$API.BUSINESS.USER.SYS+'consumerHotline';
+      this.$myRequestGet(reqUrl, {}, {})
+        .then(res => {
+          if (res.data.status === 200) {
+            let bussData = res.data.data.bussData;
+            if (bussData) {
+              store.state.consumerHotline = bussData
+            } else {
+              wx.showToast({
+                title: bussData,
+                icon: "none",
+                duration: 1500
+              });
+            }
+          }
+        })
+        .catch(error => {
+          console.log("pdf 2 png error: ", error);
+        });
     },
     postWxInfo() {
       var _this = this
@@ -643,7 +681,7 @@ export default {
               bussData.forEach(element => {
                 this.imgUrls.push({
                   img: element.coverUrl,
-                  id: element.id
+                  id: element.outId
                 });
               });
             }
@@ -663,14 +701,15 @@ export default {
           adCode: parseInt(this.adCode),
           pageIndex: this.pageIndex,
           pageSize: this.pageSize,
+          cityCode: store.state.cityCode,
           // latitude: this.latitude, // 用户目前纬度
           // longitude: this.longitude, // 用户目前经度
           maxArea: this.maxArea, // 最大面积
           maxTotalPrice: this.maxTotalPrice, // 最大价格
           minArea: this.minArea, // 最小面积
           minTotalPrice: this.minTotalPrice, // 最小价格
-          // minUnitPrice: this.minUnitPrice, // 最小单价价格
-          // maxUnitPrice: this.maxUnitPrice, // 最大单价价格
+          minUnitPrice: this.minUnitPrice, // 最小单价价格
+          maxUnitPrice: this.maxUnitPrice, // 最大单价价格
           orderBy: this.orderBy, // 排序字段 = ['area', 'location', 'total_price'],
           orderSort: this.orderSort // ['ASC', 'DESC'],
         },
