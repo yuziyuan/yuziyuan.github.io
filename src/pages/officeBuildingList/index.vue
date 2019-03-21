@@ -82,14 +82,17 @@ export default {
   },
   watch:{
     cityCode() {
-      this.pageIndex = 1
-      this.getList();
+      // this.pageIndex = 1
+      // this.officeList = []
+      // this.getList();
     }
   },
   components: {},
   onShow() {
     this.pageIndex = 1
     this.officeList = []
+    this.listIsOver = false
+    this.isLoadingList = false
     this.getList();
   },
 

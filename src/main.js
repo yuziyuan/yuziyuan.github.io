@@ -35,7 +35,8 @@ let fly = new Fly()
 //   'content-type': 'application/json'
 // }
 // fly.config.baseURL = 'https://192.29.11.219/api/'
-fly.config.baseURL = 'https://sucheng.icebartech.com/api/'
+// fly.config.baseURL = 'https://sucheng.icebartech.com/api/'
+fly.config.baseURL = 'https://sc.sckj123.com/api/'
 fly.config.withCredentials = false
 fly.interceptors.response.use(
   (response) => {

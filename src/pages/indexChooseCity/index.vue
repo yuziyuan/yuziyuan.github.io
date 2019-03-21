@@ -89,7 +89,7 @@ export default {
   },
   computed: {
     titleCity() {
-      return store.state.titleCity;
+      return store.state.getLocationTitleCity;
     },
     chooseStatus() {
       return store.state.chooseStatus
@@ -138,7 +138,7 @@ export default {
                 0,
                 res.result.address_component.city.length - 1
               );
-              store.state.titleCity = city
+              store.state.getLocationTitleCity = city
               store.state.chooseStatus = true
               store.state.chooseStatus2 = false //定位成功
               store.state.isloadingCity= false

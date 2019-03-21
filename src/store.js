@@ -4,6 +4,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     titleCity: '',
+    getLocationTitleCity: '',
     chooseStatus: true, // 定位成功与否标识
     chooseStatus2: true, // 重新定位标识
     isloadingCity: true, // 

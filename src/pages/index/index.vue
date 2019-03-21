@@ -33,9 +33,9 @@
     <div class="foot" v-if="isAuthUserinfo">
       <div class="head" :class='{"abso": isIphone &&(scrollY > 300)&&officeList.length > 2}'>
       <!-- <div class="head"> -->
-        <div v-for="(item, index) in brushConditionList" @click='brushConditionClick(item)' :key='index'>
+        <div :class='{"active":index == brushConditionListIndex}' v-for="(item, index) in brushConditionList" @click='brushConditionClick(item,index)' :key='index'>
           <span>{{item.name}}</span>
-          <img :src="item.img" alt="">
+          <img v-if="item.img" :src="item.img" alt="">
         </div>
       </div>
       <div class="hide" v-show="showAreaBox">
@@ -147,7 +147,11 @@ export default {
     return {
       isAuthUserinfo: true,
       officeList: [],
+      brushConditionListIndex: 0,
       brushConditionList: [
+        {
+          name: '所有房源'
+        },
         {
           name: "面积",
           img: "/static/images/28@2x.png"
@@ -479,7 +483,8 @@ export default {
         }
       })
     },
-    brushConditionClick(item) {
+    brushConditionClick(item,index) {
+      this.brushConditionListIndex = index
       if (item.name === "面积") {
         this.showPriceBox = false;
         this.showSortList = false;
@@ -500,6 +505,14 @@ export default {
         this.showAreaBox = false;
         this.showAddressList = false;
         this.showSortList = !this.showSortList;
+      }else if (item.name === "所有房源") {
+        this.showPriceBox = false;
+        this.showAreaBox = false;
+        this.showAddressList = false;
+        this.showSortList = false;
+        this.brushConditionListIndex = 1
+        const url = "../indexSreach/main";
+        wx.navigateTo({ url });
       }
     },
     lower(e) {
@@ -697,9 +710,9 @@ export default {
       this.$myRequest(
         reqUrl,
         {
-          isRecommend:1,
           adCode: parseInt(this.adCode),
           pageIndex: this.pageIndex,
+          isRecommend : 1,
           pageSize: this.pageSize,
           cityCode: store.state.cityCode,
           // latitude: this.latitude, // 用户目前纬度
@@ -710,7 +723,7 @@ export default {
           minTotalPrice: this.minTotalPrice, // 最小价格
           minUnitPrice: this.minUnitPrice, // 最小单价价格
           maxUnitPrice: this.maxUnitPrice, // 最大单价价格
-          orderBy: this.orderBy, // 排序字段 = ['area', 'location', 'total_price'],
+          orderBy: this.orderBy, // 排序字段 = ['area', 'total_price'],
           orderSort: this.orderSort // ['ASC', 'DESC'],
         },
         {}
@@ -904,6 +917,11 @@ export default {
           img {
             height: 10px;
           }
+        }
+      }
+      .active{
+        span{
+          color: #333;
         }
       }
     }
