@@ -306,7 +306,7 @@ export default {
                 name: bussData.name,
                 size: bussData.area,
                 houseDetailNum: bussData.roomNo,
-                houseDetailWorkstation: bussData.seat,
+                houseDetailWorkstation: bussData.seatMax?(bussData.seatMin+'~'+bussData.seatMax): '',
                 houseDetailAcreage: bussData.area + "㎡",
                 houseDetailDecoration: bussData.decoration,
                 houseDetailPattern: bussData.structure,
