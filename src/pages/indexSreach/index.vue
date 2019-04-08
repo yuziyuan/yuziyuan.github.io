@@ -163,7 +163,7 @@ export default {
       showAddressList: false,
       wd: "",
       pageIndex: 1,
-      pageSize: 10,
+      pageSize: 4,
       latitude: "", // 用户目前纬度
       longitude: "", // 用户目前经度
       maxArea: "", // 最大面积
@@ -318,17 +318,19 @@ export default {
             this.pageIndex++;
             let bussData = res.data.data.bussData;
             if (bussData && bussData.length > 0) {
-              bussData.forEach(element => {
+              bussData.forEach((element,index) => {
                 this.officeList.push({
                   id: element.id,
                   buildingId: element.buildingId,
                   img: element.firstImage ? element.firstImage.fileUrl : "",
+                  // img: "",
                   name: element.name,
                   size: element.area,
                   address: element.detailAddress,
                   money: element.totalPrice,
                   unit: element.unitPrice
                 });
+                this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
               });
               if (bussData.length < this.pageSize) {
                 this.listIsOver = true;
@@ -343,6 +345,30 @@ export default {
         .catch(error => {
           console.log("pdf 2 png error: ", error);
         });
+    },
+    changeFile2(imgurl,index) {
+      if(!imgurl)return
+      imgurl = imgurl.replace('http://','https://')
+      console.log(709)
+      var that = this
+      wx.getFileSystemManager().access({
+        path: imgurl,
+        success:function(res){
+          console.log(715)
+          console.log(res)
+          // that.officeList[index].img = res.tempFilePath
+        },
+        fail:function(res){
+          wx.downloadFile({
+            url: imgurl,
+            success:function(res2){
+              console.log(res2)
+              // that.officeList[index].img = res2.tempFilePath
+            }
+          })
+        },
+      })
+      console.log(728)
     },
     jumpDetail(item) {
       const url = "../officeDetail/main?id=" + item.id;

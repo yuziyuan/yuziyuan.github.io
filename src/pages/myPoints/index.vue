@@ -56,7 +56,7 @@ export default {
       isLoadingList: false,
       listIsOver: false,
       pageIndex: 1,
-      pageSize: 10
+      pageSize: 4
     };
   },
 

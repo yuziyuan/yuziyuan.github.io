@@ -3,19 +3,20 @@
     <div class="top">
       <div>
         <swiper class="swiper-box" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" indicator-active-color='#F90432' indicator-color='#ffffff'>
-          <block v-for="(item, index) in detail.imgUrls" :key='index'>
+          <block v-for="(item, index) in imgUrls" :key='index'>
             <swiper-item>
-              <img :src="item" alt="" mode='aspectFill' @click='lookImg(item)'>
+              <img :src="item.img" alt="" mode='aspectFill' @click='lookImg(item)'>
+              <!-- <canvas style="width: 690rpx; height:380rpx;" :canvas-id="'myCanvas'+index" @click='lookImg(index)'></canvas> -->
             </swiper-item>
           </block>
         </swiper>
-        <div class="collection" @click='collAndUncoll'>
-          <img :src="detail.collectionStatus" alt="">
-        </div>
-        <div class="size">
-          <img src="/static/images/42@2x.png" alt="">
-          <span>{{detail.size}}㎡</span>
-        </div>
+        <cover-view class="collection" @click='collAndUncoll'>
+          <cover-image :src="detail.collectionStatus" alt="" />
+        </cover-view>
+        <cover-view class="size">
+          <cover-image src="/static/images/42@2x.png" alt="" />
+          <cover-view>{{detail.size}}㎡</cover-view>
+        </cover-view>
         <div class='unitAndMoney clear'>
           <p>{{detail.name}}
             <span class='unit'>{{detail.unit}}</span>
@@ -149,6 +150,7 @@ export default {
       autoplay: false,
       interval: 5000,
       duration: 1000,
+      imgUrls: [],
       detail: {
         imgUrls: [],
         collectionStatus: "",
@@ -198,11 +200,13 @@ export default {
     this.isMake = this.$root.$mp.query.isAppoint;
   },
   methods: {
-    lookImg(item) {
-      if (this.detail.imgUrls.length > 0) {
+    lookImg(index) {
+      if (this.imgUrls.length > 0) {
         wx.previewImage({
-          current: item, // 当前显示图片的http链接
-          urls: this.detail.imgUrls // 需要预览的图片http链接列表
+          current: this.imgUrls[index].img, // 当前显示图片的http链接
+          urls: this.imgUrls.map((item)=>{
+            return item.img
+          }) // 需要预览的图片http链接列表
         });
       }
     },
@@ -296,9 +300,10 @@ export default {
             let bussData = res.data.data.bussData;
             if (bussData) {
               this.detail = {
-                imgUrls: bussData.images.map(item => {
-                  return item.fileUrl;
-                }),
+                // imgUrls: bussData.images.map(item => {
+                //   return item.fileUrl;
+                // }),
+                imgUrls:[],
                 collectionStatus: bussData.isCollected
                   ? "/static/images/coll1.png"
                   : "/static/images/coll0.png",
@@ -325,8 +330,20 @@ export default {
                 advantageList: bussData.tags.map(item => {
                   return item.name;
                 })
-                
               };
+              bussData.images.forEach((element,index) => {
+                // this.chooseWxImage(element.fileUrl,index)
+                this.imgUrls.push({
+                  key: element.fileKey,
+                  // img: ''
+                  img: element.fileUrl
+                })
+                // imgUrls: bussData.images.map(item => {
+                //   return item.fileUrl;
+                // }),
+                this.changeFile2(element.fileUrl,index)
+              });
+
               this.mapTitile1 = bussData.name;
               this.mapTitile2 = bussData.detailAddress;
               this.getLocation();
@@ -336,6 +353,66 @@ export default {
         .catch(error => {
           console.log("pdf 2 png error: ", error);
         });
+    },
+    changeFile2(imgurl,index) {
+      if(!imgurl)return
+      imgurl = imgurl.replace('http://','https://')
+      console.log(709)
+      var that = this
+      wx.getFileSystemManager().access({
+        path: imgurl,
+        success:function(res){
+          console.log(715)
+          console.log(res)
+          console.log(that.imgUrls)
+          // that.imgUrls[index].img = res.tempFilePath
+        },
+        fail:function(res){
+          wx.downloadFile({
+            url: imgurl,
+            success:function(res2){
+              console.log(362)
+              console.log(res2)
+              console.log(that.imgUrls)
+              // that.imgUrls[index].img = res2.tempFilePath
+            }
+          })
+        },
+      })
+      console.log(728)
+    },
+    // 绘制图片到canvas上
+    chooseWxImage: function(imgurl,id) {
+      imgurl = imgurl.replace('http://','https://')
+      console.log(imgurl);
+      wx.downloadFile({
+        url: imgurl,
+        success: function (sres) {
+          console.log(sres);
+          const ctx = wx.createCanvasContext("myCanvas" + id); //画布
+          ctx.drawImage(sres.tempFilePath, 0, 0, store.state.width-30, 190*store.state.width/375)
+          ctx.draw();
+          return
+          wx.getImageInfo({
+            src: sres.tempFilePath,//服务器返回的图片地址
+            success: function (res) {
+              console.log(res);
+              //res.path是网络图片的本地地址
+              let Path = res.path;
+              const ctx = wx.createCanvasContext("myCanvas" + id); //画布
+              ctx.drawImage(Path, 0, 0, store.state.width-30, 190*store.state.width/375)
+              ctx.draw();
+            },
+            fail: function (res) {
+              //失败回调
+            }
+          })
+          
+        },fail:function(fres){
+          console.log('fres');
+          console.log(fres);
+        }
+      })
     },
     getRichText(p) {
       var p0
@@ -406,7 +483,8 @@ export default {
       right: 15px;
       top: 15px;
       text-align: center;
-      img {
+      img,cover-image {
+        display: inline-block;
         width: 22px;
         height: 22px;
       }
@@ -475,15 +553,22 @@ export default {
       left: 273px;
       top: 145px;
       text-align: center;
-      img {
+      img,cover-image {
         width: 11px;
         height: 11px;
         margin-right: 5px;
+        position: absolute;
+        left: 6px;
+        top: 8px;
       }
-      span {
+      span,cover-view {
+        display: inline-block;
         font-family: PingFang-SC-Medium;
         font-size: 10px;
         color: #fff;
+        position: absolute;
+        left: 23px;
+        top: 8px;
       }
     }
     .foot-child {

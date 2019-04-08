@@ -6,7 +6,6 @@ export default {
     const logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
-
     wx.getSystemInfo({
       success(res) {
         if(res.system.indexOf('iOS') == -1) {
@@ -14,6 +13,7 @@ export default {
         }else {
           store.state.isIphone = true
         }
+        store.state.width = res.windowWidth
       }
     })
   }
