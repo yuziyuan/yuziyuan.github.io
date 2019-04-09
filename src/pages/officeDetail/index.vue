@@ -3,9 +3,9 @@
     <div class="top">
       <div>
         <swiper class="swiper-box" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" indicator-active-color='#F90432' indicator-color='#ffffff'>
-          <block v-for="(item, index) in imgUrls" :key='index'>
+          <block v-for="(item, index) in imgUrlssmall" :key='index'>
             <swiper-item>
-              <img :src="item.img" alt="" mode='aspectFill' @click='lookImg(item)'>
+              <img :src="item.img" alt="" mode='aspectFill' @click='lookImg(index)'>
               <!-- <canvas style="width: 690rpx; height:380rpx;" :canvas-id="'myCanvas'+index" @click='lookImg(index)'></canvas> -->
             </swiper-item>
           </block>
@@ -151,6 +151,7 @@ export default {
       interval: 5000,
       duration: 1000,
       imgUrls: [],
+      imgUrlssmall: [],
       detail: {
         imgUrls: [],
         collectionStatus: "",
@@ -343,7 +344,12 @@ export default {
                 // }),
                 this.changeFile2(element.fileUrl,index)
               });
-
+              bussData.smallImages.forEach((element,index) => {
+                this.imgUrlssmall.push({
+                  key: element.fileKey,
+                  img: element.fileUrl
+                })
+              });
               this.mapTitile1 = bussData.name;
               this.mapTitile2 = bussData.detailAddress;
               this.getLocation();

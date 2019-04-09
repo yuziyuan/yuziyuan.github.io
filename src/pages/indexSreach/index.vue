@@ -12,9 +12,41 @@
     </div>
     <div class="foot">
       <div class="head">
-        <div v-for="(item, index) in brushConditionList" @click='brushConditionClick(item,index)' :key='index'>
+        <!-- <div v-for="(item, index) in brushConditionList" @click='brushConditionClick(item,index)' :key='index'>
           <span>{{item.name}}</span>
           <img :src="item.img" :class='{"reserve1":index == brushConditionClickIndex}' alt="">
+        </div> -->
+        <div :class='{"active":brushConditionListIndex == 0}'  @click='brushConditionClick({name: "所有房源"},0)'>
+          <span>所有房源</span>
+          <img src="" alt="">
+        </div>
+        <div :class='{"active":brushConditionListIndex == 1}'  @click='brushConditionClick({name: "面积"},1)'>
+          <span>面积</span>
+          <img src="/static/images/28@2x.png" alt="">
+        </div>
+        <div :class='{"active":brushConditionListIndex == 2}'  @click='brushConditionClick({name: "位置"},2)'>
+          <!-- <span>位置</span> -->
+          <picker
+            mode="multiSelector"
+            @change="bindMultiPickerChange"
+            @columnchange="bindMultiPickerColumnChange"
+            :value="multiIndex"
+            :range="multiArray"
+            range-key='name'
+          >
+            <view class="picker">
+              位置
+            </view>
+          </picker>
+          <img src="/static/images/28@2x.png" alt="">
+        </div>
+        <div :class='{"active":brushConditionListIndex == 3}'  @click='brushConditionClick({name: "价格"},3)'>
+          <span>价格</span>
+          <img src="/static/images/28@2x.png" alt="">
+        </div>
+        <div :class='{"active":brushConditionListIndex == 4}'  @click='brushConditionClick({name: "排序"},4)'>
+          <span>排序</span>
+          <img src="/static/images/29@2x.png" alt="">
         </div>
       </div>
       <div class="hide" v-show="showAreaBox">
@@ -186,16 +218,52 @@ export default {
     isIphone() {
       return store.state.isIphone
     },
-    cityList() {
+    multiArray() {
       return store.state.cityAreaList
+    },
+    multiIndex(){
+      return store.state.multiIndex
     }
   },
   components: {},
   mounted() {
     this.buildingId = this.$root.$mp.query.id;
     this.getList();
+    store.state.multiIndex = [0,0]
+    console.log('this.multiArray')
+    console.log(this.multiArray)
   },
   methods: {
+    bindMultiPickerColumnChange(e) {
+      // console.log('修改的列为', e, '，值为', e)
+    },
+    bindMultiPickerChange(e) {
+      console.log('picker发送选择改变，携带值为', e.target.value)
+      store.state.multiIndex = e.target.value
+      if(this.multiArray[1][e.target.value[1]].id==''){
+        var item = {
+          key:this.multiArray[0][e.target.value[0]].id,
+          value:this.multiArray[1][e.target.value[1]].name,
+        }
+      }else {
+        var item = {
+          key:this.multiArray[1][e.target.value[1]].id,
+          value:this.multiArray[1][e.target.value[1]].name,
+        }
+      }
+       console.log(item)
+      // 城市
+      this.orderBy = "";
+      this.showAddressList = false;
+      // this.latitude = item.latitude;
+      // this.longitude = item.longitude;
+      this.adCode = item.key;
+      this.listIsOver = false;
+      this.pageIndex = 1;
+      this.isLoadingList = true;
+      this.officeList = [];
+      this.getList();
+    },
     scrollUl() {
       this.showAreaBox = false
       this.showPriceBox = false
@@ -228,7 +296,7 @@ export default {
         this.showPriceBox = false;
         this.showAreaBox = false;
         this.showSortList = false;
-        this.showAddressList = !this.showAddressList;
+        // this.showAddressList = !this.showAddressList;
       } else if (item.name === "排序") {
         this.showPriceBox = false;
         this.showAreaBox = false;
@@ -457,6 +525,12 @@ export default {
           vertical-align: middle;
           margin-left: 5px;
           transition: all .2s ease;
+        }
+        picker{
+          display: inline-block;
+          font-family: PingFang-SC-Regular;
+          font-size: 12px;
+          color: #666;
         }
         .reserve1{
           transform: rotateX(180deg);

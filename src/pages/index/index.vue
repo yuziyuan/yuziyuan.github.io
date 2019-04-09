@@ -34,11 +34,65 @@
     <div class="foot" v-if="isAuthUserinfo">
       <div class="head" :class='{"abso": isIphone &&(scrollY > 300)&&officeList.length > 2}'>
       <!-- <div class="head"> -->
-        <div :class='{"active":index == brushConditionListIndex}' v-for="(item, index) in brushConditionList" @click='brushConditionClick(item,index)' :key='index'>
+        <!-- <div :class='{"active":index == brushConditionListIndex}' v-for="(item, index) in brushConditionList" @click='brushConditionClick(item,index)' :key='index'>
           <span>{{item.name}}</span>
           <img v-if="item.img" :src="item.img" alt="">
+        </div> -->
+        <!-- brushConditionList: [
+        {
+          name: '所有房源'
+        },
+        {
+          name: "面积",
+          img: "/static/images/28@2x.png"
+        },
+        {
+          name: "位置",
+          img: "/static/images/28@2x.png"
+        },
+        {
+          name: "价格",
+          img: "/static/images/28@2x.png"
+        },
+        {
+          name: "排序",
+          img: "/static/images/29@2x.png"
+        }
+      ], -->
+        <div :class='{"active":brushConditionListIndex == 0}'  @click='brushConditionClick({name: "所有房源"},0)'>
+          <span>所有房源</span>
+          <img src="" alt="">
+        </div>
+        <div :class='{"active":brushConditionListIndex == 1}'  @click='brushConditionClick({name: "面积"},1)'>
+          <span>面积</span>
+          <img src="/static/images/28@2x.png" alt="">
+        </div>
+        <div :class='{"active":brushConditionListIndex == 2}'  @click='brushConditionClick({name: "位置"},2)'>
+          <!-- <span>位置</span> -->
+          <picker
+            mode="multiSelector"
+            @change="bindMultiPickerChange"
+            @columnchange="bindMultiPickerColumnChange"
+            :value="multiIndex"
+            :range="multiArray"
+            range-key='name'
+          >
+            <view class="picker">
+              位置
+            </view>
+          </picker>
+          <img src="/static/images/28@2x.png" alt="">
+        </div>
+        <div :class='{"active":brushConditionListIndex == 3}'  @click='brushConditionClick({name: "价格"},3)'>
+          <span>价格</span>
+          <img src="/static/images/28@2x.png" alt="">
+        </div>
+        <div :class='{"active":brushConditionListIndex == 4}'  @click='brushConditionClick({name: "排序"},4)'>
+          <span>排序</span>
+          <img src="/static/images/29@2x.png" alt="">
         </div>
       </div>
+      
       <div class="hide" v-show="showAreaBox">
         <div class="formBox">
           <div class="inputBox">
@@ -146,6 +200,7 @@ qqmapsdk = new QQMapWX({
 export default {
   data() {
     return {
+      multiArray: [],
       isAuthUserinfo: true,
       officeList: [],
       brushConditionListIndex: 0,
@@ -217,33 +272,7 @@ export default {
           orderSort: "DESC"
         }
       ],
-      cityList: [
-        // {
-        //   name: "北京",
-        //   longitude: 114.06667,
-        //   latitude: 39.91667
-        // },
-        // {
-        //   name: "上海",
-        //   longitude: 121.43333,
-        //   latitude: 22.61667
-        // },
-        // {
-        //   name: "广州",
-        //   longitude: 113.23333,
-        //   latitude: 34.5
-        // },
-        // {
-        //   name: "深圳",
-        //   longitude: 114.06667,
-        //   latitude: 22.61667
-        // },
-        // {
-        //   name: "成都",
-        //   longitude: 104.06667,
-        //   latitude: 30.66667
-        // }
-      ],
+      cityList: [],
       isLoadingList: false,
       showAreaBox: false,
       showPriceBox: false,
@@ -277,6 +306,9 @@ export default {
     },
     titleCity() {
       return store.state.titleCity;
+    },
+    multiIndex(){
+      return store.state.multiIndex
     }
   },
   mounted() {
@@ -289,6 +321,7 @@ export default {
     this.landlordLogin(query);
   },
   onShow(){
+    store.state.multiIndex = [0,0]
     if(store.state.cityCode) {
       this.getCityList(store.state.cityCode)
     }
@@ -305,6 +338,37 @@ export default {
     }
   },
   methods: {
+    bindMultiPickerColumnChange(e) {
+      // console.log('修改的列为', e, '，值为', e)
+    },
+    bindMultiPickerChange(e) {
+      console.log('picker发送选择改变，携带值为', e.target.value)
+      store.state.multiIndex = e.target.value
+      if(this.multiArray[1][e.target.value[1]].id==''){
+        var item = {
+          key:this.multiArray[0][e.target.value[0]].id,
+          value:this.multiArray[1][e.target.value[1]].name,
+        }
+      }else {
+        var item = {
+          key:this.multiArray[1][e.target.value[1]].id,
+          value:this.multiArray[1][e.target.value[1]].name,
+        }
+      }
+       console.log(item)
+      this.orderBy = "";
+      this.showAddressList = false;
+      // this.latitude = latitude;
+      // this.longitude = longitude;
+      this.adCode = item.key;
+      this.listIsOver = false;
+      this.pageIndex = 1;
+      this.isLoadingList = true;
+      this.officeList = [];
+      this.getList();
+      
+      this.getCityListLatLng(item)
+    },
     scrollContainer(e) {
       if(this.officeList.length> 2) {
         this.showAreaBox = false
@@ -378,11 +442,26 @@ export default {
             let bussData = res.data.data.bussData;
             if (bussData) {
               this.cityList = bussData
+              var second = bussData.map(item=>{
+                return {
+                  id: item.key,
+                  name: item.value
+                }
+              })
+              second.unshift({
+                key: '',
+                name: '全部'
+              })
+              this.multiArray = [[{id:cityCode,name:store.state.titleCity}],second]
+              console.log(second)
+              console.log(this.multiArray)
+
               this.cityList.unshift({
                 key: '',
                 value: '全部'
               })
-              store.state.cityAreaList = bussData
+              // store.state.cityAreaList = bussData
+              store.state.cityAreaList = [[{id:'',name:store.state.titleCity}],second]
             } else {
               wx.showToast({
                 title: bussData,
@@ -395,19 +474,6 @@ export default {
         .catch(error => {
           console.log("pdf 2 png error: ", error);
         });
-      return
-      var array = store.state.wxCityList
-      var _this = this
-      var evenD = function(e,i) {
-        if( e.cid == cityCode) {
-          _this.cityList = e.districts
-        }
-        return e.cid == cityCode;
-      };
-
-      array.forEach(element => {
-        element.citys.some(evenD)
-      });
     },
     getCityListLatLng(item) {
       console.log(this.titleCity+'市'+item.dname)
@@ -500,7 +566,7 @@ export default {
         this.showPriceBox = false;
         this.showAreaBox = false;
         this.showSortList = false;
-        this.showAddressList = !this.showAddressList;
+        // this.showAddressList = !this.showAddressList;
       } else if (item.name === "排序") {
         this.showPriceBox = false;
         this.showAreaBox = false;
@@ -994,6 +1060,12 @@ export default {
           height: 5px;
           vertical-align: middle;
           margin-left: 5px;
+        }
+        picker{
+          display: inline-block;
+          font-family: PingFang-SC-Regular;
+          font-size: 12px;
+          color: #666;
         }
         &:last-child {
           img {

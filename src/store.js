@@ -12,6 +12,7 @@ const store = new Vuex.Store({
     mobile: '',
     consumerHotline: '',
     isIphone: false,
+    multiIndex: [0, 0],
     width: '',
     cityAreaList: [],
     cityList: [
