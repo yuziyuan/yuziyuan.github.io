@@ -117,7 +117,7 @@ export default {
                   money: element.totalPrice,
                   unit: element.unitPrice
                 });
-                this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
+                //this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
               });
               if(bussData.length < this.pageSize) {
                 this.listIsOver = true;

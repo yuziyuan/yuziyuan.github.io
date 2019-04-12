@@ -81,11 +81,6 @@ export default {
     },
   },
   watch:{
-    cityCode() {
-      // this.pageIndex = 1
-      // this.officeList = []
-      // this.getList();
-    }
   },
   components: {},
   onShow() {
@@ -94,50 +89,8 @@ export default {
     this.listIsOver = false
     this.isLoadingList = false
     this.getList();
-    if(store.state.cityCode) {
-      this.getCityList(store.state.cityCode)
-    }
   },
   methods: {
-    getCityList(cityCode) {
-      
-      let reqUrl = this.$API.BASE.FINDDISTRICT
-      this.$myRequestGet(reqUrl, {
-        cityCode: cityCode
-      }, {})
-        .then(res => {
-          if (res.data.status === 200) {
-            let bussData = res.data.data.bussData;
-            if (bussData) {
-              this.cityList = bussData
-              var second = bussData.map(item=>{
-                return {
-                  id: item.key,
-                  name: item.value
-                }
-              })
-              second.unshift({
-                key: '',
-                name: '全部'
-              })
-              this.multiArray = [[{id:cityCode,name:store.state.titleCity}],second]
-              console.log(second)
-              console.log(this.multiArray)
-
-              store.state.cityAreaList = [[{id:'',name:store.state.titleCity}],second]
-            } else {
-              wx.showToast({
-                title: bussData,
-                icon: "none",
-                duration: 1500
-              });
-            }
-          }
-        })
-        .catch(error => {
-          console.log("pdf 2 png error: ", error);
-        });
-    },
     jumpAddress() {
       const url = "../indexChooseCity/main";
       wx.navigateTo({ url });
@@ -175,7 +128,7 @@ export default {
                   money: element.minPrice,
                   unit: "在租"+element.officeCount+"套"
                 });
-                this.changeFile2(element.coverUrl,index)
+                //this.changeFile2(element.coverUrl,index)
               });
               if(bussData.length < this.pageSize) {
                 this.listIsOver = true;

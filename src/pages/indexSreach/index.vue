@@ -26,14 +26,7 @@
         </div>
         <div :class='{"active":brushConditionListIndex == 2}'  @click='brushConditionClick({name: "位置"},2)'>
           <!-- <span>位置</span> -->
-          <picker
-            mode="multiSelector"
-            @change="bindMultiPickerChange"
-            @columnchange="bindMultiPickerColumnChange"
-            :value="multiIndex"
-            :range="multiArray"
-            range-key='name'
-          >
+          <picker mode="region" @change="bindRegionChange" value="region" :custom-item="customItem">
             <view class="picker">
               位置
             </view>
@@ -209,7 +202,8 @@ export default {
       listIsOver: false,
       adCode: '',
       brushConditionClickIndex: -1,
-      // buildingId: ''
+      cityCode:store.state.cityCode,
+      buildingId: ''
       // wd (string, optional): 关键词
     };
   },
@@ -218,46 +212,21 @@ export default {
     isIphone() {
       return store.state.isIphone
     },
-    multiArray() {
-      return store.state.cityAreaList
-    },
-    multiIndex(){
-      return store.state.multiIndex
-    }
   },
   components: {},
   mounted() {
     this.buildingId = this.$root.$mp.query.id;
     this.getList();
-    store.state.multiIndex = [0,0]
-    console.log('this.multiArray')
-    console.log(this.multiArray)
   },
   methods: {
-    bindMultiPickerColumnChange(e) {
-      // console.log('修改的列为', e, '，值为', e)
-    },
-    bindMultiPickerChange(e) {
-      console.log('picker发送选择改变，携带值为', e.target.value)
-      store.state.multiIndex = e.target.value
-      if(this.multiArray[1][e.target.value[1]].id==''){
-        var item = {
-          key:this.multiArray[0][e.target.value[0]].id,
-          value:this.multiArray[1][e.target.value[1]].name,
-        }
-      }else {
-        var item = {
-          key:this.multiArray[1][e.target.value[1]].id,
-          value:this.multiArray[1][e.target.value[1]].name,
-        }
-      }
-       console.log(item)
-      // 城市
+    bindRegionChange: function (e) {
+      console.log('picker发送选择改变，携带值为2222', e)
       this.orderBy = "";
       this.showAddressList = false;
-      // this.latitude = item.latitude;
-      // this.longitude = item.longitude;
-      this.adCode = item.key;
+      // this.latitude = latitude;
+      // this.longitude = longitude;
+      this.adCode = e.target.code[2]
+      this.cityCode = e.target.code[1]
       this.listIsOver = false;
       this.pageIndex = 1;
       this.isLoadingList = true;
@@ -360,7 +329,7 @@ export default {
         reqUrl,
         {
           // cityCode: this.buildingId ? store.state.cityCode : "",cityCode
-          cityCode: store.state.cityCode,
+          cityCode: this.cityCode,
           wd: this.wd,
           adCode: parseInt(this.adCode),
           buildingId: this.buildingId,
@@ -398,7 +367,7 @@ export default {
                   money: element.totalPrice,
                   unit: element.unitPrice
                 });
-                this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
+                //this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
               });
               if (bussData.length < this.pageSize) {
                 this.listIsOver = true;

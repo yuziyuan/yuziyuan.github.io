@@ -19,6 +19,7 @@ const API = {
   BASE:{
     MINIUPLOADFILE: 'base/sys/mini/miniUploadFile',
     FINDDISTRICT: 'base/sys/app/findDistrict',
+    loadDictionary: 'base/sys/admin/loadDictionary',
   },
   BUSINESS: { 
     OFFICEROOM: {

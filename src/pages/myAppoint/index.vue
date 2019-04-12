@@ -90,7 +90,7 @@ export default {
                   money: element.roomTotalPrice,
                   unit: element.roomUnitPrice
                 });
-                this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
+                //this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
               });
               if(bussData.length < this.pageSize) {
                 this.listIsOver = true;

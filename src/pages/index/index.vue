@@ -33,32 +33,6 @@
     <div class="middle" v-if="isAuthUserinfo"></div>
     <div class="foot" v-if="isAuthUserinfo">
       <div class="head" :class='{"abso": isIphone &&(scrollY > 300)&&officeList.length > 2}'>
-      <!-- <div class="head"> -->
-        <!-- <div :class='{"active":index == brushConditionListIndex}' v-for="(item, index) in brushConditionList" @click='brushConditionClick(item,index)' :key='index'>
-          <span>{{item.name}}</span>
-          <img v-if="item.img" :src="item.img" alt="">
-        </div> -->
-        <!-- brushConditionList: [
-        {
-          name: '所有房源'
-        },
-        {
-          name: "面积",
-          img: "/static/images/28@2x.png"
-        },
-        {
-          name: "位置",
-          img: "/static/images/28@2x.png"
-        },
-        {
-          name: "价格",
-          img: "/static/images/28@2x.png"
-        },
-        {
-          name: "排序",
-          img: "/static/images/29@2x.png"
-        }
-      ], -->
         <div :class='{"active":brushConditionListIndex == 0}'  @click='brushConditionClick({name: "所有房源"},0)'>
           <span>所有房源</span>
           <img src="" alt="">
@@ -69,14 +43,7 @@
         </div>
         <div :class='{"active":brushConditionListIndex == 2}'  @click='brushConditionClick({name: "位置"},2)'>
           <!-- <span>位置</span> -->
-          <picker
-            mode="multiSelector"
-            @change="bindMultiPickerChange"
-            @columnchange="bindMultiPickerColumnChange"
-            :value="multiIndex"
-            :range="multiArray"
-            range-key='name'
-          >
+          <picker mode="region" @change="bindRegionChange" value="region" :custom-item="customItem">
             <view class="picker">
               位置
             </view>
@@ -294,7 +261,7 @@ export default {
       scrollTop: '',
       scrollY: '',
       adCode: '',
-      cityCode: '',
+      cityCode: store.state.cityCode,
     };
   },
 
@@ -321,9 +288,14 @@ export default {
     this.landlordLogin(query);
   },
   onShow(){
-    store.state.multiIndex = [0,0]
-    if(store.state.cityCode) {
-      this.getCityList(store.state.cityCode)
+    if(this.cityCode!=store.state.cityCode){
+      this.listIsOver = false;
+      this.pageIndex = 1; 
+      this.adCode = ''
+      this.cityCode = store.state.cityCode
+      this.isLoadingList = true;
+      this.officeList = [];
+      this.getList();
     }
   },
   watch:{
@@ -338,37 +310,6 @@ export default {
     }
   },
   methods: {
-    bindMultiPickerColumnChange(e) {
-      // console.log('修改的列为', e, '，值为', e)
-    },
-    bindMultiPickerChange(e) {
-      console.log('picker发送选择改变，携带值为', e.target.value)
-      store.state.multiIndex = e.target.value
-      if(this.multiArray[1][e.target.value[1]].id==''){
-        var item = {
-          key:this.multiArray[0][e.target.value[0]].id,
-          value:this.multiArray[1][e.target.value[1]].name,
-        }
-      }else {
-        var item = {
-          key:this.multiArray[1][e.target.value[1]].id,
-          value:this.multiArray[1][e.target.value[1]].name,
-        }
-      }
-       console.log(item)
-      this.orderBy = "";
-      this.showAddressList = false;
-      // this.latitude = latitude;
-      // this.longitude = longitude;
-      this.adCode = item.key;
-      this.listIsOver = false;
-      this.pageIndex = 1;
-      this.isLoadingList = true;
-      this.officeList = [];
-      this.getList();
-      
-      this.getCityListLatLng(item)
-    },
     scrollContainer(e) {
       if(this.officeList.length> 2) {
         this.showAreaBox = false
@@ -419,7 +360,6 @@ export default {
               }else if(store.state.titleCity.indexOf('重庆')> -1){
                 store.state.cityCode = '500100'
               }
-              _this.getCityList(store.state.cityCode)
             },
             fail: function(error) {
               console.error(error);
@@ -431,49 +371,19 @@ export default {
         }
       });
     },
-    getCityList(cityCode) {
-      
-      let reqUrl = this.$API.BASE.FINDDISTRICT
-      this.$myRequestGet(reqUrl, {
-        cityCode: cityCode
-      }, {})
-        .then(res => {
-          if (res.data.status === 200) {
-            let bussData = res.data.data.bussData;
-            if (bussData) {
-              this.cityList = bussData
-              var second = bussData.map(item=>{
-                return {
-                  id: item.key,
-                  name: item.value
-                }
-              })
-              second.unshift({
-                key: '',
-                name: '全部'
-              })
-              this.multiArray = [[{id:cityCode,name:store.state.titleCity}],second]
-              console.log(second)
-              console.log(this.multiArray)
-
-              this.cityList.unshift({
-                key: '',
-                value: '全部'
-              })
-              // store.state.cityAreaList = bussData
-              store.state.cityAreaList = [[{id:'',name:store.state.titleCity}],second]
-            } else {
-              wx.showToast({
-                title: bussData,
-                icon: "none",
-                duration: 1500
-              });
-            }
-          }
-        })
-        .catch(error => {
-          console.log("pdf 2 png error: ", error);
-        });
+    bindRegionChange: function (e) {
+      console.log('picker发送选择改变，携带值为2222', e)
+      this.orderBy = "";
+      this.showAddressList = false;
+      // this.latitude = latitude;
+      // this.longitude = longitude;
+      this.adCode = e.target.code[2]
+      this.cityCode = e.target.code[1]
+      this.listIsOver = false;
+      this.pageIndex = 1;
+      this.isLoadingList = true;
+      this.officeList = [];
+      this.getList();
     },
     getCityListLatLng(item) {
       console.log(this.titleCity+'市'+item.dname)
@@ -763,7 +673,7 @@ export default {
                   img: element.coverUrl,
                   id: element.outId
                 });
-                this.changeFile(element.coverUrl,index)
+                //this.changeFile(element.coverUrl,index)
               });
             }
           }
@@ -836,7 +746,7 @@ export default {
           pageIndex: this.pageIndex,
           isRecommend : 1,
           pageSize: this.pageSize,
-          cityCode: store.state.cityCode,
+          cityCode: this.cityCode,
           // latitude: this.latitude, // 用户目前纬度
           // longitude: this.longitude, // 用户目前经度
           maxArea: this.maxArea, // 最大面积
@@ -868,7 +778,7 @@ export default {
                   money: element.totalPrice,
                   unit: element.unitPrice
                 });
-                this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
+                //this.changeFile2(element.firstImage ? element.firstImage.fileUrl : "",index)
               });
               if(bussData.length < this.pageSize) {
                 this.listIsOver = true;

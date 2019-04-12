@@ -342,7 +342,7 @@ export default {
                 // imgUrls: bussData.images.map(item => {
                 //   return item.fileUrl;
                 // }),
-                this.changeFile2(element.fileUrl,index)
+                //this.changeFile2(element.fileUrl,index)
               });
               bussData.smallImages.forEach((element,index) => {
                 this.imgUrlssmall.push({

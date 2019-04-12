@@ -91,7 +91,7 @@ export default {
                     money: element.officeRoom.totalPrice,
                     unit: element.officeRoom.unitPrice
                   });
-                  this.changeFile2(element.officeRoom.firstImage ? element.officeRoom.firstImage.fileUrl : "",index)
+                  //this.changeFile2(element.officeRoom.firstImage ? element.officeRoom.firstImage.fileUrl : "",index)
                 }
               });
               if(bussData.length < this.pageSize) {
