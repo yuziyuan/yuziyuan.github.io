@@ -771,7 +771,6 @@ export default {
                   id: element.id,
                   buildingId: element.buildingId,
                   img: element.firstImage ? element.firstImage.fileUrl : "",
-                  // img: "",
                   name: element.name,
                   size: element.area,
                   address: element.detailAddress,

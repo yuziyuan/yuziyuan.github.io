@@ -332,23 +332,20 @@ export default {
                   return item.name;
                 })
               };
-              bussData.images.forEach((element,index) => {
+              bussData.smallImages.forEach((element,index) => {
                 // this.chooseWxImage(element.fileUrl,index)
                 this.imgUrls.push({
                   key: element.fileKey,
                   // img: ''
                   img: element.fileUrl
                 })
-                // imgUrls: bussData.images.map(item => {
-                //   return item.fileUrl;
-                // }),
-                //this.changeFile2(element.fileUrl,index)
               });
-              bussData.smallImages.forEach((element,index) => {
+              bussData.images.forEach((element,index) => {
                 this.imgUrlssmall.push({
                   key: element.fileKey,
                   img: element.fileUrl
                 })
+                //this.changeFile2(element.fileUrl,index)
               });
               this.mapTitile1 = bussData.name;
               this.mapTitile2 = bussData.detailAddress;
