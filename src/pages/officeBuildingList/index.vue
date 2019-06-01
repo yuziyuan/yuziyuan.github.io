@@ -74,6 +74,7 @@ export default {
   },
   computed:{
     cityCode() {
+      console.log()
       return store.state.cityCode
     },
     titleCity() {
@@ -82,15 +83,34 @@ export default {
   },
   watch:{
   },
+  mounted(){
+    this.init()
+  },
   components: {},
   onShow() {
-    this.pageIndex = 1
-    this.officeList = []
-    this.listIsOver = false
-    this.isLoadingList = false
-    this.getList();
+    try {
+      var value = wx.getStorageSync('changeCity')
+      if (value) {
+        // Do something with return value
+        this.init()
+        try {
+          wx.removeStorageSync('changeCity')
+        } catch (e) {
+          // Do something when catch error
+        }
+      }
+    } catch (e) {
+      // Do something when catch error
+    }
   },
   methods: {
+    init(){
+      this.pageIndex = 1
+      this.officeList = []
+      this.listIsOver = false
+      this.isLoadingList = false
+      this.getList();
+    },
     jumpAddress() {
       const url = "../indexChooseCity/main";
       wx.navigateTo({ url });

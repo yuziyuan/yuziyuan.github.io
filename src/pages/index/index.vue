@@ -209,8 +209,8 @@ export default {
       imgUrls: [
       ],
       indicatorDots: true,
-      autoplay: false,
-      interval: 5000,
+      autoplay: true,
+      interval: 3000,
       duration: 1000,
       sortList: [
         {
@@ -597,7 +597,7 @@ export default {
                   wx.setStorageSync("sessionId", resData);
                   wx.hideLoading();
                   _this.getSipwer();
-                  _this.getMobile();
+                  // _this.getMobile();
                   _this.getLocation();
                   _this.getConsumerHotline()
                   // wx.setStorageSync('userId', resData.userId)

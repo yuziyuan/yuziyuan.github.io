@@ -192,7 +192,8 @@ export default {
               }else if(store.state.titleCity.indexOf('重庆')> -1){
                 store.state.cityCode = '500100'
               }
-              wx.navigateBack();
+
+              _this.Jump()
             },
             fail: function(error) {
               // console.error(error);
@@ -206,6 +207,12 @@ export default {
           console.log(res);
         }
       });
+    },
+    Jump(){
+      try {
+        wx.setStorageSync('changeCity', 'true')
+        wx.navigateBack()
+      } catch (e) { }
     },
     formSubmit(item) {
       var _this = this;
@@ -223,7 +230,7 @@ export default {
           store.state.cityCode = item.codeId;
           store.state.latitude = res.location.lat;
           store.state.longitude = res.location.lng;
-          wx.navigateBack();
+          _this.Jump()
         },
         fail: function(error) {
           console.error(error);

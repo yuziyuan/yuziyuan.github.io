@@ -201,7 +201,7 @@ export default {
       orderSort: "ASC", // ['ASC', 'DESC'],
       listIsOver: false,
       adCode: '',
-      brushConditionClickIndex: -1,
+      brushConditionClickIndex: 0,
       cityCode:store.state.cityCode,
       buildingId: ''
       // wd (string, optional): 关键词
@@ -245,12 +245,12 @@ export default {
       this.getList();
     },
     brushConditionClick(item,index) {
-      if(this.brushConditionClickIndex == index) {
-        this.brushConditionClickIndex = -1
-      }else {
-        this.brushConditionClickIndex = index
-      }
-      
+      // if(this.brushConditionClickIndex == index) {
+      //   this.brushConditionClickIndex = -1
+      // }else {
+      //   this.brushConditionClickIndex = index
+      // }
+
       if (item.name === "面积") {
         this.showPriceBox = false;
         this.showSortList = false;
@@ -271,7 +271,27 @@ export default {
         this.showAreaBox = false;
         this.showAddressList = false;
         this.showSortList = !this.showSortList;
+      }else if (item.name === "所有房源") {
+        if(this.brushConditionClickIndex == index) {
+          wx.showToast({
+            title: "已经是所有房源",
+            icon: "none",
+            duration: 1500
+          });
+          return
+        }
+        this.showPriceBox = false;
+        this.showAreaBox = false;
+        this.showAddressList = false;
+        this.showSortList = false
+        this.orderBy = "";
+        this.listIsOver = false;
+        this.pageIndex = 1;
+        this.isLoadingList = true;
+        this.officeList = [];
+        this.getList();
       }
+      this.brushConditionClickIndex = index
     },
     lower(e) {
       if (this.isLoadingList || this.listIsOver) return;
