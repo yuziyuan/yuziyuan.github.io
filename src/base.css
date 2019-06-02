@@ -1,39 +1,49 @@
-.clear:after{
+.clear:after {
     content: '';
     clear: both;
     display: block;
 }
+
 button::after {
     border-radius: 0;
 }
-button{
+
+button {
     border-radius: 0;
 }
 
-.container{
+.container {
     margin-bottom: 50px;
     overflow: hidden;
 }
-.ul-foot{
+
+.ul-foot {
     height: 40px;
     line-height: 40px;
     color: #999999;
     font-family: PingFang-SC-Regular;
     font-size: 12px;
     text-align: center;
-
 }
-.ul-foot  img{
+
+.ul-foot img {
     width: 12px;
     height: 12px;
     vertical-align: middle;
     margin-right: 6px;
 }
-.isAndroidBindPhone{
+
+.isAndroidBindPhone {
     position: relative;
     top: 6px !important;
 }
-.isAndroidSreach{
+
+.isAndroidSreach {
     position: relative;
     top: 6px !important;
+}
+
+.feature {
+    color: #16509b !important;
+    margin-left: 10px;
 }

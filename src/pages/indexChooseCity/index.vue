@@ -31,10 +31,17 @@
     </div>
     <div class="middle"></div>
     <div class="foot">
-      <ul>
+      <!-- <ul>
         <li v-for="(item, index) in list" :key='index'>
           <span>{{item.codeName}}</span>
           <a class="weui-btn weui-btn_plain-default" v-for="(item2, index2) in item.cityList" :key='index2' @click='jumpIndex(item2)'>{{item2.codeName}}</a>
+        </li>
+      </ul> -->
+      <ul>
+        <li v-for="(item, index) in openedCityList" :key='index'>
+          <span @click='jumpIndex(item,index,"","")'>{{item.codeName}}</span>
+          <a class="weui-btn weui-btn_plain-default" v-for="(item2, index2) in item.child" 
+          :key='index2' @click='jumpIndex(item,index,item2,index2)'>{{item2.value}}</a>
         </li>
       </ul>
       <!-- <span>已开通城市</span> -->
@@ -52,35 +59,36 @@ qqmapsdk = new QQMapWX({
 export default {
   data() {
     return {
-      openedCityList: [
-        {
-          name: "北京",
-          longitude: 114.06667,
-          latitude: 39.91667
-        },
-        {
-          name: "上海",
-          longitude: 121.43333,
-          latitude: 22.61667
-        },
-        {
-          name: "广州",
-          longitude: 113.23333,
-          latitude: 34.5
-        },
-        {
-          name: "深圳",
-          longitude: 114.06667,
-          latitude: 22.61667
-        },
-        {
-          name: "成都",
-          longitude: 104.06667,
-          latitude: 30.66667
-        }
-      ],
-      list: store.state.cityList,
+      // openedCityList: [
+        // {
+        //   name: "北京",
+        //   longitude: 114.06667,
+        //   latitude: 39.91667
+        // },
+        // {
+        //   name: "上海",
+        //   longitude: 121.43333,
+        //   latitude: 22.61667
+        // },
+        // {
+        //   name: "广州",
+        //   longitude: 113.23333,
+        //   latitude: 34.5
+        // },
+        // {
+        //   name: "深圳",
+        //   longitude: 114.06667,
+        //   latitude: 22.61667
+        // },
+        // {
+        //   name: "成都",
+        //   longitude: 104.06667,
+        //   latitude: 30.66667
+        // }
+      // ],
+      // list: store.state.cityList,
       // isloadingCity: true
+      openedCityList:store.state.openedCityList,
       p1: '重新定位',
       p2: '定位服务已关闭 去设置',
       p3: '请到设置>隐私>定位服务中打开定位权限',
@@ -104,6 +112,7 @@ export default {
   components: {},
   
   mounted() {
+    console.log(this.openedCityList)
     wx.showLoading({ 
       title: "加载中..." ,
       mask: true
@@ -114,8 +123,27 @@ export default {
     // this.getLocation();
   },
   methods: {
-    jumpIndex(item) {
-      this.formSubmit(item);
+    jumpIndex(item,index,item2,index2) {
+      if(index2!==''){
+        //点击区 跳转
+        store.state.multiIndex = [index,index2] // picker市区一级当前下标
+        store.state.titleCity = item.codeName; //选中的城市
+        store.state.cityCode = item.codeId; // 选中的区code
+        store.state.adCode = item2.key; // 选中的区code
+      }else {
+        //点击市 跳转
+        store.state.multiIndex = [index,0] // picker市区一级当前下标
+        store.state.titleCity = item.codeName; //选中的城市
+        store.state.cityCode = item.codeId; // 选中的区code
+        store.state.adCode = ''; // 选中的区code
+      }
+      store.state.multiArray[1] = store.state.openedCityList[index].child
+    console.log(141)
+    console.log(store.state.cityCode)
+    console.log(store.state.adCode)
+    console.log(item,index,item2,index2)
+      this.Jump()
+      // this.formSubmit(item,index,index2);
     },
     getLocation() {
       var _this = this 
@@ -214,7 +242,7 @@ export default {
         wx.navigateBack()
       } catch (e) { }
     },
-    formSubmit(item) {
+    formSubmit(item,index,index2) {
       var _this = this;
       //调用地址解析接口
       qqmapsdk.geocoder({
@@ -384,6 +412,7 @@ export default {
       font-size: 15px;
       margin-right: 10px;
       margin-top: 15px;
+      overflow: hidden;
       &:hover {
         background-color: #dcd9d9;
       }

@@ -21,6 +21,9 @@
             <p>{{item.name}}
               <span class='unit'>{{item.unit}}</span>
               <span>元/㎡</span>
+                <span class="feature">
+                  {{item.feature}}
+                </span>
             </p>
             <div class="foot-child clear">
               <div class="address">
@@ -112,6 +115,7 @@ export default {
                   img: element.firstImage ? element.firstImage.fileUrl : "",
                   // img: "",
                   name: element.name,
+                  feature: element.feature,
                   size: element.area,
                   address: element.detailAddress,
                   money: element.totalPrice,

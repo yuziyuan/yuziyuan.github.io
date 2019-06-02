@@ -43,11 +43,23 @@
         </div>
         <div :class='{"active":brushConditionListIndex == 2}'  @click='brushConditionClick({name: "位置"},2)'>
           <!-- <span>位置</span> -->
-          <picker mode="region" @change="bindRegionChange" value="region" :custom-item="customItem">
+          <!-- <picker mode="region" @change="bindRegionChange" value="region" :custom-item="customItem">
             <view class="picker">
               位置
             </view>
+          </picker> -->
+          <picker mode="multiSelector" 
+          @change="bindMultiPickerChange" 
+          @columnchange="bindMultiPickerColumnChange" 
+          :value="multiIndex" 
+          :range="multiArray"
+          :range-key="'value'">
+            <view class="picker">
+              位置
+              <!-- 当前选择：{{multiArray[0][multiIndex[0]]}}，{{multiArray[1][multiIndex[1]]}}，{{multiArray[2][multiIndex[2]]}} -->
+            </view>
           </picker>
+
           <img src="/static/images/28@2x.png" alt="">
         </div>
         <div :class='{"active":brushConditionListIndex == 3}'  @click='brushConditionClick({name: "价格"},3)'>
@@ -122,6 +134,9 @@
               <p>{{item.name}}
                 <span class='unit'>{{item.unit}}</span>
                 <span>元/㎡</span>
+                <span class="feature">
+                  {{item.feature}}
+                </span>
               </p>
               <div class="foot-child clear">
                 <div class="address">
@@ -167,7 +182,7 @@ qqmapsdk = new QQMapWX({
 export default {
   data() {
     return {
-      multiArray: [],
+      // multiArray: [],
       isAuthUserinfo: true,
       officeList: [],
       brushConditionListIndex: 0,
@@ -260,8 +275,6 @@ export default {
       listIsOver: false,
       scrollTop: '',
       scrollY: '',
-      adCode: '',
-      cityCode: store.state.cityCode,
     };
   },
 
@@ -276,6 +289,18 @@ export default {
     },
     multiIndex(){
       return store.state.multiIndex
+    },
+    multiArray(){
+      return store.state.multiArray
+    },
+    cityCode(){
+      return store.state.cityCode
+    },
+    adCode(){
+      return store.state.adCode
+    },
+    openedCityList(){
+      return store.state.openedCityList
     }
   },
   mounted() {
@@ -288,28 +313,117 @@ export default {
     this.landlordLogin(query);
   },
   onShow(){
-    if(this.cityCode!=store.state.cityCode){
-      this.listIsOver = false;
-      this.pageIndex = 1; 
-      this.adCode = ''
-      this.cityCode = store.state.cityCode
-      this.isLoadingList = true;
-      this.officeList = [];
-      this.getList();
-    }
+    // if(this.cityCode!=store.state.cityCode){
+    //   this.listIsOver = false;
+    //   this.pageIndex = 1; 
+    //   this.isLoadingList = true;
+    //   this.officeList = [];
+    //   this.getList();
+    // }
+    console.log(323)
+    console.log(this.cityCode)
+    console.log(this.adCode)
   },
   watch:{
     '$store.state.cityCode'() {
       this.listIsOver = false;
       this.pageIndex = 1; 
-      this.adCode = ''
-      this.cityCode = store.state.cityCode
       this.isLoadingList = true;
       this.officeList = [];
       this.getList();
-    }
+    },
+    '$store.state.adCode'() {
+      this.listIsOver = false;
+      this.pageIndex = 1; 
+      this.isLoadingList = true;
+      this.officeList = [];
+      this.getList();
+    },
   },
   methods: {
+    bindMultiPickerChange (e) {
+      console.log('picker发送选择改变，携带值为', e.target.value)
+      this.cityInit(e.target.value)
+    },
+    cityInit(val){
+      this.orderBy = "";
+      this.showAddressList = false;
+      store.state.adCode = this.multiArray[1][val[1]].key
+      store.state.cityCode = this.multiArray[0][val[0]].key
+      console.log(this.adCode)
+      console.log(this.cityCode)
+      this.listIsOver = false;
+      this.pageIndex = 1;
+      this.isLoadingList = true;
+      this.officeList = [];
+      this.getList();
+    },
+    bindMultiPickerColumnChange (e) {
+      console.log('修改的列为', e.target.column, '，值为', e.target.value);
+      store.state.multiIndex[e.target.column] = e.target.value;
+      if(e.target.column==0){
+        store.state.multiArray = [store.state.multiArray[0],this.openedCityList[store.state.multiIndex[0]].child] 
+        store.state.multiIndex = [store.state.multiIndex[0],0];
+      }
+    },
+    getListcity() {
+      let reqUrl = '/mini/open-city'
+      this.$myRequestGet(
+        reqUrl,
+        {},
+        {}
+      )
+        .then(res => {
+          if (res.data.status === 200) {
+            let bussData = res.data.data.bussData;
+            if (bussData && bussData.length > 0) {
+              bussData.forEach(element => {
+                this.getDistrict(element)
+              });
+            }
+          }
+        })
+        .catch(error => {
+          console.log("pdf 2 png error: ", error);
+        });
+    },
+    getDistrict(element) {
+      let reqUrl = this.$API.BASE.FINDDISTRICT
+      this.$myRequestGet(
+        reqUrl,
+        {
+          cityCode:element.codeId
+        },
+        {}
+      )
+        .then(res => {
+          if (res.data.status === 200) {
+            let bussData = res.data.data.bussData;
+
+            if (bussData && bussData.length > 0) {
+              element.child=[{
+                key:'',
+                value:'全部'
+              }]
+              bussData.forEach(element2 => {
+                element.child.push(element2)
+              });
+              store.state.openedCityList.push(element)
+              store.state.multiArray[0].push({
+                key:element.codeId,
+                value:element.codeName
+              })
+              store.state.multiArray[1] = store.state.openedCityList[0].child
+            }
+            console.log('store.state.openedCityList')
+            console.log(store.state.openedCityList)
+            console.log(store.state.multiArray)
+          }
+        })
+        .catch(error => {
+          console.log("pdf 2 png error: ", error);
+        });
+    },
     scrollContainer(e) {
       if(this.officeList.length> 2) {
         this.showAreaBox = false
@@ -600,6 +714,8 @@ export default {
                   // _this.getMobile();
                   _this.getLocation();
                   _this.getConsumerHotline()
+                  _this.getListcity()
+                  
                   // wx.setStorageSync('userId', resData.userId)
                 }
               })
@@ -742,7 +858,7 @@ export default {
       this.$myRequest(
         reqUrl,
         {
-          adCode: parseInt(this.adCode),
+          adCode: this.adCode,
           pageIndex: this.pageIndex,
           isRecommend : 1,
           pageSize: this.pageSize,
@@ -774,6 +890,7 @@ export default {
                   name: element.name,
                   size: element.area,
                   address: element.detailAddress,
+                  feature: element.feature,
                   money: element.totalPrice,
                   unit: element.unitPrice
                 });

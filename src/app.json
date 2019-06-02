@@ -1,74 +1,73 @@
 {
-  "pages": [
-    "pages/index/main",
-    "pages/bindPhone/main",
-    "pages/indexSreach/main",
-    "pages/indexCommInfo/main",
-    "pages/my/main",
-    "pages/indexChooseCity/main",
-    "pages/myRecommendCourtesy/main",
-    "pages/myRecommendCourtesyList/main",
-    "pages/myPoints/main",
-    "pages/officeBuildingList/main",
-    "pages/changePhone/main",
-    "pages/bindPhoneInfo/main",
-    "pages/myNews/main",
-    "pages/myInfo/main",
-    "pages/myContract/main",
-    "pages/myCollection/main",
-    "pages/myAppoint/main",
-    "pages/makeAnAppoint/main",
-    "pages/inteSearchRoom/main",
-    "pages/makeAnAppointC/main",
-    "pages/inteSearchRoomList/main",
-    "pages/consult/main",
-    "pages/officeDetail/main",
-    "pages/myCommonProblem/main",
-    "pages/myService/main",
-    "pages/logs/main",
-    "pages/counter/main"
-  ],
-  "permission": {
-    "scope.userLocation": {
-      "desc": "“苏成空间”需要获取你的地理位置"
+    "pages": [
+        "pages/index/main",
+        "pages/bindPhone/main",
+        "pages/indexSreach/main",
+        "pages/indexCommInfo/main",
+        "pages/my/main",
+        "pages/indexChooseCity/main",
+        "pages/myRecommendCourtesy/main",
+        "pages/myRecommendCourtesyList/main",
+        "pages/myPoints/main",
+        "pages/officeBuildingList/main",
+        "pages/changePhone/main",
+        "pages/bindPhoneInfo/main",
+        "pages/myNews/main",
+        "pages/myInfo/main",
+        "pages/myContract/main",
+        "pages/myCollection/main",
+        "pages/myAppoint/main",
+        "pages/makeAnAppoint/main",
+        "pages/inteSearchRoom/main",
+        "pages/makeAnAppointC/main",
+        "pages/inteSearchRoomList/main",
+        "pages/consult/main",
+        "pages/officeDetail/main",
+        "pages/myCommonProblem/main",
+        "pages/myService/main",
+        "pages/logs/main",
+        "pages/counter/main"
+    ],
+    "permission": {
+        "scope.userLocation": {
+            "desc": "“苏成空间”需要获取你的地理位置"
+        }
+    },
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "WeChat",
+        "navigationBarTextStyle": "black"
+    },
+    "tabBar": {
+        "color": "#B8B8B8",
+        "selectedColor": "#16509B",
+        "backgroundColor": "#ffffff",
+        "borderStyle": "black",
+        "list": [{
+                "pagePath": "pages/index/main",
+                "text": "首页",
+                "iconPath": "static/images/37@2x.png",
+                "selectedIconPath": "static/images/11@2x.png"
+            },
+            {
+                "pagePath": "pages/inteSearchRoom/main",
+                "text": "智能找房",
+                "iconPath": "static/images/36@2x.png",
+                "selectedIconPath": "static/images/10@2x.png"
+            },
+            {
+                "pagePath": "pages/consult/main",
+                "text": "咨询",
+                "iconPath": "static/images/35@2x.png",
+                "selectedIconPath": "static/images/9@2x.png"
+            },
+            {
+                "pagePath": "pages/my/main",
+                "text": "我的",
+                "iconPath": "static/images/34@2x.png",
+                "selectedIconPath": "static/images/8@2x.png"
+            }
+        ]
     }
-  },
-  "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
-    "navigationBarTextStyle": "black"
-  },
-  "tabBar": {
-    "color": "#B8B8B8",
-    "selectedColor": "#16509B",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "black",
-    "list": [
-      {
-        "pagePath": "pages/index/main",
-        "text": "首页",
-        "iconPath": "static/images/37@2x.png",
-        "selectedIconPath": "static/images/11@2x.png"
-      },
-      {
-        "pagePath": "pages/inteSearchRoom/main",
-        "text": "智能找房",
-        "iconPath": "static/images/36@2x.png",
-        "selectedIconPath": "static/images/10@2x.png"
-      },
-      {
-        "pagePath": "pages/consult/main",
-        "text": "咨询",
-        "iconPath": "static/images/35@2x.png",
-        "selectedIconPath": "static/images/9@2x.png"
-      },
-      {
-        "pagePath": "pages/my/main",
-        "text": "我的",
-        "iconPath": "static/images/34@2x.png",
-        "selectedIconPath": "static/images/8@2x.png"
-      }
-    ]
-  }
 }

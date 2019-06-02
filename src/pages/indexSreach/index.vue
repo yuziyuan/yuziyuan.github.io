@@ -26,9 +26,15 @@
         </div>
         <div :class='{"active":brushConditionListIndex == 2}'  @click='brushConditionClick({name: "位置"},2)'>
           <!-- <span>位置</span> -->
-          <picker mode="region" @change="bindRegionChange" value="region" :custom-item="customItem">
+          <picker mode="multiSelector" 
+          @change="bindMultiPickerChange" 
+          @columnchange="bindMultiPickerColumnChange" 
+          :value="multiIndex" 
+          :range="multiArray"
+          :range-key="'value'">
             <view class="picker">
               位置
+              <!-- 当前选择：{{multiArray[0][multiIndex[0]]}}，{{multiArray[1][multiIndex[1]]}}，{{multiArray[2][multiIndex[2]]}} -->
             </view>
           </picker>
           <img src="/static/images/28@2x.png" alt="">
@@ -104,6 +110,9 @@
               <p>{{item.name}}
                 <span class='unit'>{{item.unit}}</span>
                 <span>元/㎡</span>
+                <span class="feature">
+                  {{item.feature}}
+                </span>
               </p>
               <div class="foot-child clear">
                 <div class="address">
@@ -180,7 +189,6 @@ export default {
           orderSort: "DESC"
         }
       ],
-      // cityList: store.state.cityAreaList,
       isLoadingList: false,
       showAreaBox: false,
       showPriceBox: false,
@@ -200,11 +208,8 @@ export default {
       orderBy: "area", // 排序字段 = ['area', 'location', 'total_price'],
       orderSort: "ASC", // ['ASC', 'DESC'],
       listIsOver: false,
-      adCode: '',
       brushConditionClickIndex: 0,
-      cityCode:store.state.cityCode,
       buildingId: ''
-      // wd (string, optional): 关键词
     };
   },
 
@@ -212,25 +217,70 @@ export default {
     isIphone() {
       return store.state.isIphone
     },
+    multiIndex(){
+      return store.state.multiIndex
+    },
+    multiArray(){
+      return store.state.multiArray
+    },
+    cityCode(){
+      return store.state.cityCode
+    },
+    adCode(){
+      return store.state.adCode
+    },
+    openedCityList(){
+      return store.state.openedCityList
+    }
   },
   components: {},
   mounted() {
+    store.state.adCode=''
+    store.state.cityCode=''
     this.buildingId = this.$root.$mp.query.id;
     this.getList();
   },
   methods: {
-    bindRegionChange: function (e) {
-      console.log('picker发送选择改变，携带值为2222', e)
+    bindMultiPickerChange (e) {
+      console.log('picker发送选择改变，携带值为', e.target.value)
+      this.cityInit(e.target.value)
+    },
+    cityInit(val){
+      console.log(this.multiArray)
+      console.log(this.multiArray[1][val[1]].key)
+      console.log(this.multiArray[0][val[0]].key)
+      store.state.adCode = this.multiArray[1][val[1]].key
+      store.state.cityCode = this.multiArray[0][val[0]].key
+      console.log(this.adCode)
+      console.log(this.cityCode)
       this.orderBy = "";
       this.showAddressList = false;
-      // this.latitude = latitude;
-      // this.longitude = longitude;
-      this.adCode = e.target.code[2]
-      this.cityCode = e.target.code[1]
       this.listIsOver = false;
       this.pageIndex = 1;
       this.isLoadingList = true;
       this.officeList = [];
+      this.getList();
+    },
+    bindMultiPickerColumnChange (e) {
+      console.log('修改的列为', e.target.column, '，值为', e.target.value);
+      store.state.multiIndex[e.target.column] = e.target.value;
+      if(e.target.column==0){
+        store.state.multiArray = [store.state.multiArray[0],this.openedCityList[store.state.multiIndex[0]].child] 
+        store.state.multiIndex = [store.state.multiIndex[0],0];
+      }
+    },
+    bindRegionChange: function (e) {
+      console.log('picker发送选择改变，携带值为2222', e)
+      // this.orderBy = "";
+      // this.showAddressList = false;
+      // // this.latitude = latitude;
+      // // this.longitude = longitude;
+      // this.adCode = e.target.code[2]
+      // this.cityCode = e.target.code[1]
+      // this.listIsOver = false;
+      // this.pageIndex = 1;
+      // this.isLoadingList = true;
+      // this.officeList = [];
       this.getList();
     },
     scrollUl() {
@@ -245,12 +295,6 @@ export default {
       this.getList();
     },
     brushConditionClick(item,index) {
-      // if(this.brushConditionClickIndex == index) {
-      //   this.brushConditionClickIndex = -1
-      // }else {
-      //   this.brushConditionClickIndex = index
-      // }
-
       if (item.name === "面积") {
         this.showPriceBox = false;
         this.showSortList = false;
@@ -284,8 +328,18 @@ export default {
         this.showAreaBox = false;
         this.showAddressList = false;
         this.showSortList = false
-        this.orderBy = "";
         this.listIsOver = false;
+      this.maxArea="", // 最大面积
+      this.maxTotalPrice= "", // 最大价格
+      this.wd = ''
+      this.minArea="", // 最小面积
+      this.minTotalPrice= "", // 最小价格
+      this.minUnitPrice= "", // 最小单价价格
+      this.maxUnitPrice= "", // 最大单价价格
+      this.orderBy= "area", // 排序字段 = ['area', 'location', 'total_price'],
+      this.orderSort= "ASC", // ['ASC', 'DESC'],
+        this.adCode = ''
+        this.cityCode = ''
         this.pageIndex = 1;
         this.isLoadingList = true;
         this.officeList = [];
@@ -351,7 +405,7 @@ export default {
           // cityCode: this.buildingId ? store.state.cityCode : "",cityCode
           cityCode: this.cityCode,
           wd: this.wd,
-          adCode: parseInt(this.adCode),
+          adCode: this.adCode,
           buildingId: this.buildingId,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize,
@@ -378,6 +432,7 @@ export default {
               bussData.forEach((element,index) => {
                 this.officeList.push({
                   id: element.id,
+                  feature: element.feature,
                   buildingId: element.buildingId,
                   img: element.firstImage ? element.firstImage.fileUrl : "",
                   // img: "",
