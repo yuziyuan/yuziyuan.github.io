@@ -1,11 +1,10 @@
 <template>
   <div class="container bingPhone">
-    <div class="box">
+    <!-- <div class="box">
       <div class="top">
         <div class="image">
           <img src="/static/images/23@2x.png" alt="">
         </div>
-        <!-- <button @click='Jump'>跳过</button> -->
         <p @click='Jump'>跳过</p>
       </div>
       <div class="middle">
@@ -22,6 +21,16 @@
           <button @click='formSubmit'>保存</button>
         </view>
       </div>
+    </div> -->
+    <div class="auth-box">
+      <div class="top">
+        <img src="/static/images/23@2x.png" alt="logo">
+      </div>
+      <section>
+        <img src="/static/images/wx.png" alt="weixin">
+        <p class="auth-text">点击授权微信手机信息</p>
+        <button class="auth-btn" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" @click="handleAuthBtnClick"></button>
+      </section>
     </div>
   </div>
 </template>
@@ -48,6 +57,50 @@ export default {
     
   },
   methods: {
+    getPhoneNumber(e) {
+      // getPhoneNumber:fail user deny getPhoneNumber:ok
+      console.log(e);
+      console.log(e.target.errMsg);
+      console.log(e.target.errMsg.indexOf("ok") > -1);
+      if (e.target.errMsg.indexOf("ok") > -1) {
+        console.log('591')
+        this.savePhone(e.target);
+      } else if (e.target.errMsg.indexOf("fail") > -1) {
+        console.log('594')
+        wx.showToast({
+          title: '微信手机信息授权失败，请重试',
+          duration: 2000
+        })
+      }
+    },
+    savePhone(resPhone) {
+      let reqUrl = 'mini/user/saveWxPhoneNumber'
+      var params = {
+        encryptedData: resPhone.encryptedData,
+        iv: resPhone.iv,
+      };
+      console.log('保存手机',params)
+      this.$myRequest(reqUrl, params, {})
+        .then(res => {
+          console.log(res)
+          if (res.data.status === 200) {
+            let bussData = res.data.data.bussData;
+            if(bussData){
+              wx.showToast({
+                title: '授权成功',
+                icon:'success',
+                duration: 2000
+              })
+              setTimeout(() => {
+                wx.navigateBack()
+              }, 1500);
+            }
+          }
+        })
+        .catch(error => {
+          console.log("pdf 2 png error: ", error);
+        });
+    },
     getCode() {
       if (!this.phoneNumber) {
         wx.showToast({
@@ -223,6 +276,46 @@ export default {
 
 <style scoped lang='less'>
 .container.bingPhone {
+  .auth-box{
+    text-align: center;
+    width: 100%;
+    height: 1000rpx;
+    margin-top: 100rpx;
+    .top{
+      padding: 73rpx 0 100rpx;
+      text-align: center;
+      img{
+        width: 337rpx;
+        height: 400rpx;
+      }
+    }
+    section{
+      position: relative;
+      height: 80rpx;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .auth-text {
+        color: #999;
+        font-size: 26rpx;
+        line-height: 80rpx;
+      }
+      img{
+        width: 46rpx;
+        height: 38rpx;
+        margin-right: 30rpx;
+      }
+    }
+    .auth-btn {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      z-index: 9;
+    }
+  }
   .box {
     .top {
       position: relative;
