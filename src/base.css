@@ -44,6 +44,10 @@ button {
 }
 
 .feature {
-    color: #16509b !important;
-    margin-left: 10px;
+    color: #fff !important;
+    margin-right: 10px;
+    background: #16509b;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
 }

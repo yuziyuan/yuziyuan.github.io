@@ -107,12 +107,13 @@
                 <img src="/static/images/42@2x.png" alt="">
                 <span>{{item.size}}㎡</span>
               </div>
-              <p>{{item.name}}
-                <span class='unit'>{{item.unit}}</span>
-                <span>元/㎡</span>
-                <span class="feature">
+              <p>
+                <span class="feature" v-if="item.feature">
                   {{item.feature}}
                 </span>
+                {{item.name}}
+                <span class='unit'>{{item.unit}}</span>
+                <span>元/㎡</span>
               </p>
               <div class="foot-child clear">
                 <div class="address">
