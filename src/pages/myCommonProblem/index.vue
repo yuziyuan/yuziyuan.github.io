@@ -58,21 +58,23 @@ export default {
     li {
       p {
         &:first-child {
-          height: 44px;
+          // height: 44px;
           line-height: 44px;
           font-size: 15px;
           font-family: PingFang-SC-Medium;
           color: #16509b;
           padding-left: 15px;
+          padding-right: 15px;
         }
         &:last-child {
-          height: 40px;
+          // height: 40px;
           line-height: 40px;
           background-color: #f4f4f4;
           font-size: 13px;
           font-family: PingFang-SC-Medium;
           color: #333;
           padding-left: 15px;
+          padding-right: 15px;
         }
       }
     }
