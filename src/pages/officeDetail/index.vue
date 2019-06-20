@@ -5,7 +5,9 @@
         <swiper class="swiper-box" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" indicator-active-color='#F90432' indicator-color='#ffffff'>
           <block v-for="(item, index) in imgUrlssmall" :key='index'>
             <swiper-item>
-              <img :src="item.img" alt="" mode='aspectFill' @click='lookImg(index)'>
+              <!-- <img :src="item.img" alt="" mode='aspectFill' @click='lookImg(index)'> -->
+              <div class="img-bg" @click='lookImg(index)' :style="{'background':'url('+item.img+') center;','background-size':'100%;'}"></div>
+              
               <!-- <canvas style="width: 690rpx; height:380rpx;" :canvas-id="'myCanvas'+index" @click='lookImg(index)'></canvas> -->
             </swiper-item>
           </block>

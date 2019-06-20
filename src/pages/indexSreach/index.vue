@@ -99,10 +99,11 @@
         </ul>
       </div>
       <div class="middle">
-        <scroll-view @scroll="scrollUl" scroll-y style="height: 624px;" @scrolltolower="lower">
+        <!-- <scroll-view @scroll="scrollUl" scroll-y style="height: 624px;" @scrolltolower="lower"> -->
           <ul>
             <li v-for="(item, index) in officeList" :key='index' @click='jumpDetail(item)'>
-              <img :src="item.img" alt="" mode='aspectFill'>
+              <!-- <img :src="item.img" alt="" mode='aspectFill'> -->
+              <div class="img-bg" :style="{'background':'url('+item.img+') center;','background-size':'100%;'}"></div>
               <div class="size">
                 <img src="/static/images/42@2x.png" alt="">
                 <span>{{item.size}}㎡</span>
@@ -133,7 +134,7 @@
               已加载完全
             </div>
           </ul>
-        </scroll-view>
+        <!-- </scroll-view> -->
       </div>
     </div>
   </div>
@@ -233,6 +234,11 @@ export default {
     openedCityList(){
       return store.state.openedCityList
     }
+  },
+  onReachBottom() {
+    // Do something when page reach bottom.
+    console.log('onReachBottom      indexSreach')
+    this.lower()
   },
   components: {},
   mounted() {

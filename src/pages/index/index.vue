@@ -1,5 +1,6 @@
 <template>
-  <scroll-view scroll-y class="container" @scroll="scrollContainer" style="height: 100vh;" scroll-top="scrollTop" @scrolltolower="lower">
+  <!-- <scroll-view scroll-y class="container" @scroll="scrollContainer" style="height: 100vh;" scroll-top="scrollTop" @scrolltolower="lower"> -->
+  <div class="container">
     <div class="top" v-if="isAuthUserinfo">
       <div class="head">
         <div class="address" @click='jumpAddress'>
@@ -17,7 +18,9 @@
         <swiper class="swiper-box" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" indicator-active-color='#1980FF' indicator-color='#ffffff'>
           <block v-for="(item, index) in imgUrls" :key='index'>
             <swiper-item @click='jumpDetail(item)'>
-              <img :src="item.img" alt="" mode='aspectFill'>
+              <div class="img-bg" :style="{'background':'url('+item.img+') center;','background-size':'100%;'}"
+              ></div>
+              <!-- <img :src="item.img" alt="" mode='aspectFill'> -->
               <!-- <canvas style="width: 750rpx; height:380rpx;" :canvas-id="'myCanvas'+index"></canvas> -->
             </swiper-item>
           </block>
@@ -123,41 +126,40 @@
         </ul>
       </div>
       <div class="middle">
-        <!-- <scroll-view scroll-y @scroll="scrollUl" style="height: 624px;" @scrolltolower="lower"> -->
-          <ul>
-            <li v-for="(item, index) in officeList" :key='index' @click='jumpDetail(item)'>
-              <img :src="item.img" alt="" mode='aspectFill'>
-              <div class="size">
-                <img src="/static/images/42@2x.png" alt="">
-                <span>{{item.size}}㎡</span>
+        <ul>
+          <li v-for="(item, index) in officeList" :key='index' @click='jumpDetail(item)' >
+            <!-- <img :src="item.img" alt="" mode='aspectFill'> -->
+            <div class="img-bg" :style="{'background':'url('+item.img+') center;','background-size':'100%;'}"></div>
+            <div class="size">
+              <img src="/static/images/42@2x.png" alt="">
+              <span>{{item.size}}㎡</span>
+            </div>
+            <p>
+              <span class="feature" v-if="item.feature">
+                {{item.feature}}
+              </span>
+              {{item.name}}
+              <span class='unit'>{{item.unit}}</span>
+              <span>元/㎡</span>
+            </p>
+            <div class="foot-child clear">
+              <div class="address">
+                <img src="/static/images/48@2x.png" alt="">
+                <p>{{item.address}}</p>
               </div>
               <p>
-                <span class="feature" v-if="item.feature">
-                  {{item.feature}}
-                </span>
-                {{item.name}}
-                <span class='unit'>{{item.unit}}</span>
-                <span>元/㎡</span>
+                <span class='money'>{{"￥ "+item.money}}</span>
+                <span>元/月</span>
               </p>
-              <div class="foot-child clear">
-                <div class="address">
-                  <img src="/static/images/48@2x.png" alt="">
-                  <p>{{item.address}}</p>
-                </div>
-                <p>
-                  <span class='money'>{{"￥ "+item.money}}</span>
-                  <span>元/月</span>
-                </p>
-              </div>
-            </li>
-            <div v-show="!listIsOver" class="ul-foot">
-              <img src="/static/images/46@2x.png" alt=""> 加载中
             </div>
-            <div v-show="listIsOver" class="ul-foot">
-              已加载完全
-            </div>
-          </ul>
-        <!-- </scroll-view> -->
+          </li>
+          <div v-show="!listIsOver" class="ul-foot">
+            <img src="/static/images/46@2x.png" alt=""> 加载中
+          </div>
+          <div v-show="listIsOver" class="ul-foot">
+            已加载完全
+          </div>
+        </ul>
       </div>
     </div>
     <div class="auth-box" v-if="!isAuthUserinfo">
@@ -170,7 +172,8 @@
         <button class="auth-btn" open-type="getUserInfo" @getuserinfo="handleBindUserInfo" @click="handleAuthBtnClick"></button>
       </section>
     </div>
-  </scroll-view>
+  </div>
+  <!-- </scroll-view> -->
 </template>
 
 <script>
@@ -280,6 +283,11 @@ export default {
   },
 
   components: {},
+  onReachBottom() {
+    // Do something when page reach bottom.
+    console.log('onReachBottom      index')
+    this.lower()
+  },
 
   computed: {
     isIphone() {
