@@ -643,7 +643,11 @@ export default {
         }
       }
       .two {
+        .title{
+          margin-bottom:-10px;
+        }
         .content {
+          margin-bottom: 10px;
           p,.p {
             font-family: PingFang-SC-Regular;
             color: #000;

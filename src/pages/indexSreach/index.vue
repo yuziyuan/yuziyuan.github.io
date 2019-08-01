@@ -4,14 +4,23 @@
       <div class="search-bar" id="searchBar">
         <div class="search-bar__box">
           <img class="icon-search" src="/static/images/49@2x.png" alt="">
-          <input :class='{"isAndroidSreach": !isIphone}' v-model="wd" type="search" @input='inputChange' class="search-bar__input" id="searchInput" placeholder="搜索" required="">
-          <img v-show="wd.length > 0" @click='wd = ""' src="/static/images/close2.png" class='close' alt="">
+          <input @focus="showkeywordlist=true" @blur="blurinput"
+          :class='{"isAndroidSreach": !isIphone}' v-model="wd" type="search" @input='inputChange' class="search-bar__input" id="searchInput" placeholder="搜索" required="">
+          <img v-show="wd.length > 0" @click='wd = "";inputChange()' src="/static/images/close2.png" class='close' alt="">
         </div>
         <a class="search-bar__cancel-btn" id="searchCancel" @click='jumpIndex'>取消</a>
+        <ul v-if="showkeywordlist" class="keywordlist">
+          <li v-for="(item, index) in keywordlist" :key='index' @click='keywordclick(item)'>
+            {{item.word}}
+          </li>
+          <li @click='clearkeywordlist' v-if="keywordlist.length>0">
+            清除历史搜索记录
+          </li>
+        </ul>
       </div>
     </div>
     <div class="foot">
-      <div class="head">
+      <div class="head" v-if="!showkeywordlist">
         <!-- <div v-for="(item, index) in brushConditionList" @click='brushConditionClick(item,index)' :key='index'>
           <span>{{item.name}}</span>
           <img :src="item.img" :class='{"reserve1":index == brushConditionClickIndex}' alt="">
@@ -48,7 +57,7 @@
           <img src="/static/images/29@2x.png" alt="">
         </div>
       </div>
-      <div class="hide" v-show="showAreaBox">
+      <div class="hide" v-if="!showkeywordlist" v-show="showAreaBox">
         <div class="formBox">
           <div class="inputBox">
             <input type="number" v-model="minArea">
@@ -62,7 +71,7 @@
           </div>
         </div>
       </div>
-      <div class="hide" v-show="showPriceBox">
+      <div class="hide" v-if="!showkeywordlist" v-show="showPriceBox">
         <div class="formBox">
           <div class="inputBox">
             <span class='unit unit1'>总价</span>
@@ -84,26 +93,28 @@
           </div>
         </div>
       </div>
-      <div class="hide" v-show="showAddressList">
+      <div class="hide" v-if="!showkeywordlist" v-show="showAddressList">
         <ul>
           <li v-for="(item, index) in cityList" :key='index' @click='sortAddress(item)'>
             {{item.value}}
           </li>
         </ul>
       </div>
-      <div class="hide" v-show="showSortList">
+      <div class="hide" v-if="!showkeywordlist" v-show="showSortList">
         <ul>
           <li v-for="(item, index) in sortList" :key='index' @click='sortKindof(item)'>
             {{item.name}}
           </li>
         </ul>
       </div>
-      <div class="middle">
+      <div class="middle" 
+      :style="{'visibility':!showkeywordlist?'inherit':'hidden'}">
         <!-- <scroll-view @scroll="scrollUl" scroll-y style="height: 624px;" @scrolltolower="lower"> -->
           <ul>
             <li v-for="(item, index) in officeList" :key='index' @click='jumpDetail(item)'>
               <!-- <img :src="item.img" alt="" mode='aspectFill'> -->
-              <div class="img-bg" :style="{'background':'url('+item.img+') center;','background-size':'100%;'}"></div>
+              <div class="img-bg" 
+              :style="{'background':'url('+item.img+') center;','background-size':'100%;','opacity':!showkeywordlist?1:0}"></div>
               <div class="size">
                 <img src="/static/images/42@2x.png" alt="">
                 <span>{{item.size}}㎡</span>
@@ -145,6 +156,7 @@ import store from "@/store";
 export default {
   data() {
     return {
+      showkeywordlist:false,
       officeList: [],
       brushConditionList: [
         {
@@ -211,7 +223,9 @@ export default {
       orderSort: "ASC", // ['ASC', 'DESC'],
       listIsOver: false,
       brushConditionClickIndex: 0,
-      buildingId: ''
+      buildingId: '',
+      keywordlist:wx.getStorageSync('keywordlist')||[],
+      timer:''
     };
   },
 
@@ -268,6 +282,15 @@ export default {
       this.officeList = [];
       this.getList();
     },
+    keywordclick(item){
+      console.log(item)
+      this.wd=item.word
+      console.log(this.wd)
+      setTimeout(() => {
+        this.showkeywordlist=false
+      }, 400);
+      this.inputChange()
+    },
     bindMultiPickerColumnChange (e) {
       console.log('修改的列为', e.target.column, '，值为', e.target.value);
       store.state.multiIndex[e.target.column] = e.target.value;
@@ -297,9 +320,21 @@ export default {
       this.showSortList = false
     },
     inputChange() {
-      this.officeList = [];
-      this.pageIndex = 1;
-      this.getList();
+      if(this.timer){
+          clearTimeout(this.timer);
+      }
+      if(this.wd){
+          this.timer = setTimeout(() => {
+              this.officeList = [];
+              this.pageIndex = 1;
+              this.getList();
+          }, 700)
+      }else{
+          // 输入框中的内容被删为空时触发，此时会清除之前展示的搜索结果
+          this.officeList = [];
+          this.pageIndex = 1;
+          this.getList();
+      }
     },
     brushConditionClick(item,index) {
       if (item.name === "面积") {
@@ -403,6 +438,16 @@ export default {
       this.officeList = [];
       this.getList();
     },
+    clearkeywordlist(){
+      this.keywordlist=[]
+      wx.setStorageSync('keywordlist',[])
+      this.showkeywordlist = false
+    },
+    blurinput(){
+      setTimeout(() => {
+        this.showkeywordlist=false
+      }, 400);
+    },
     getList() {
       wx.showLoading({ title: "加载中" });
       let reqUrl = this.$API.BUSINESS.OFFICEROOM.PAGE;
@@ -431,6 +476,20 @@ export default {
       )
         .then(res => {
           if (res.data.status === 200) {
+            var keywordlist = wx.getStorageSync('keywordlist')||[]
+            console.log('keywordlist')
+            console.log(keywordlist)
+            console.log(this.keywordlist)
+            var ok = keywordlist.find(element => {
+              return element.word == this.wd
+            });
+            console.log(!ok)
+            if(!ok && this.wd){
+              this.keywordlist.push({
+                word:this.wd
+              })
+              wx.setStorageSync('keywordlist', this.keywordlist)
+            }
             this.isLoadingList = false;
             wx.hideLoading();
             this.pageIndex++;
@@ -459,6 +518,7 @@ export default {
             } else {
               this.listIsOver = true;
             }
+            this.showkeywordlist=false
           }
         })
         .catch(error => {
@@ -544,6 +604,27 @@ export default {
           width: 74%;
           position: relative;
           top: 1px;
+        }
+      }
+      .keywordlist{
+        width: 285px;
+        margin-left: 34px;
+        display: inline-block;
+        background: #fff;
+        position: relative;
+        top: -10px;
+        line-height: 40px;
+        li{
+          display: inline-block;
+          height: 16px;
+          font-size: 12px;
+          line-height: 16px;
+          margin-right: 10px;
+          text-align: center;
+          color: #333;
+          background: #f6f6f6;
+          border-radius: 10px;
+          padding: 3px 5px;
         }
       }
       a.search-bar__cancel-btn {

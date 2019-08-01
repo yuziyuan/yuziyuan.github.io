@@ -955,7 +955,7 @@ export default {
             let bussData = res.data.data.bussData;
             if (!bussData.mobile) {
               const url = "../bindPhone/main";
-              wx.navigateTo({ url });
+              // wx.navigateTo({ url });
             }
             wx.hideLoading();
           }
