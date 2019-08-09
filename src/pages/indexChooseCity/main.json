@@ -1,7 +1,0 @@
-{
-    "enablePullDownRefresh": true,
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "选择城市",
-    "navigationBarTextStyle": "black"
-}

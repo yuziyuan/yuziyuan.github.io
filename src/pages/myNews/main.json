@@ -1,7 +1,0 @@
-{
-    "enablePullDownRefresh": true,
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "我的消息",
-    "navigationBarTextStyle": "black"
-}

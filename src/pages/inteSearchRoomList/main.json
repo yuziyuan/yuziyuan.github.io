@@ -1,8 +1,0 @@
-{
-    "enablePullDownRefresh": true,
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "智能找房",
-    "navigationBarTextStyle": "black",
-    "onReachBottomDistance": 20
-}
